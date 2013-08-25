@@ -1,4 +1,4 @@
-package com.xavax.cache;
+package com.xavax.cache.map;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

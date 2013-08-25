@@ -1,6 +1,7 @@
-package com.xavax.cache;
+package com.xavax.cache.map;
 
 import org.testng.annotations.Test;
+
 
 import static org.testng.Assert.*;
 
