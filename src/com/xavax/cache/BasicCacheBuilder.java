@@ -10,29 +10,34 @@ public class BasicCacheBuilder<K,V>
     this.managerClass = (Class<? extends BasicCacheManager<K, V>>) BasicCacheManagerImpl.class;
   }
 
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder<K,V> withAdapter(Class<? extends BasicCacheAdapter<K,V>> adapterClass)
       throws CacheBuilderException {
-    return withAdapter(adapterClass);
+    return (BasicCacheBuilder<K, V>) super.withAdapter(adapterClass);
   }
 
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder<K,V> withInitialCapacity(int initialCapacity)
       throws CacheBuilderException {
-    return withInitialCapacity(initialCapacity);
+    return (BasicCacheBuilder<K, V>) super.withInitialCapacity(initialCapacity);
   }
 
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder<K,V> withMaximumCapacity(int maximumCapacity)
       throws CacheBuilderException {
-    return withMaximumCapacity(maximumCapacity);
+    return (BasicCacheBuilder<K, V>) super.withMaximumCapacity(maximumCapacity);
   }
 
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder<K,V> withLoadFactor(float loadFactor)
       throws CacheBuilderException {
-    return withLoadFactor(loadFactor);
+    return (BasicCacheBuilder<K, V>) super.withLoadFactor(loadFactor);
   }
 
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder<K,V> withWritePolicy(WritePolicy writePolicy)
       throws CacheBuilderException {
-    return withWritePolicy(writePolicy);
+    return (BasicCacheBuilder<K, V>) super.withWritePolicy(writePolicy);
   }
 
   public BasicCacheBuilder<K,V> withManager(Class<? extends BasicCacheManager<K,V>> manager)

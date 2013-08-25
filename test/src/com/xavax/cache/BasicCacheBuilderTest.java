@@ -58,7 +58,7 @@ public class BasicCacheBuilderTest {
     assertEquals(builder.current.adapterClass, adapterClass);
   }
 
-  @Test
+  @Test(expectedExceptions = CacheBuilderException.class)
   public void testWithNullAdapter() throws Exception {
     builder.withAdapter(null);
   }
