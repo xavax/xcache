@@ -1,3 +1,8 @@
+//
+// Copyright 2013 by Xavax, Inc. All Rights Reserved.
+// Use of this software is allowed under the Xavax Open Software License.
+// http://www.xavax.com/xosl.html
+//
 package com.xavax.cache;
 
 import org.testng.annotations.BeforeMethod;
@@ -8,6 +13,12 @@ import com.xavax.cache.impl.BasicCacheManagerImpl;
 
 import static org.testng.Assert.*;
 
+/**
+ * Test cases for the BasicCacheBuilder class.
+ *
+ * @author alvitar@xavax.com
+ *
+ */
 public class BasicCacheBuilderTest {
   private BasicCacheBuilder<String, Integer> builder;
 
