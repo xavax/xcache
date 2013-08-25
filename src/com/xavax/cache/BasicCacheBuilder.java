@@ -1,62 +1,45 @@
 package com.xavax.cache;
 
-import java.util.List;
-import java.util.Map;
+import com.xavax.cache.impl.BasicCacheManagerImpl;
 
-import com.xavax.base.XObject;
-import com.xavax.util.CollectionFactory;
+public class BasicCacheBuilder<K,V>
+	extends CacheBuilder<Class<? extends BasicCacheAdapter<K,V>>> {
 
-public class BasicCacheBuilder<K,V> extends XObject {
-
+  @SuppressWarnings("unchecked")
   public BasicCacheBuilder() {
-    adapters = CollectionFactory.arrayList();
-    initialContent = null;
-    current = null;
+    this.managerClass = (Class<? extends BasicCacheManager<K, V>>) BasicCacheManagerImpl.class;
+  }
+
+  public BasicCacheBuilder<K,V> withAdapter(Class<? extends BasicCacheAdapter<K,V>> adapterClass)
+      throws CacheBuilderException {
+    return withAdapter(adapterClass);
   }
 
   public BasicCacheBuilder<K,V> withInitialCapacity(int initialCapacity)
       throws CacheBuilderException {
-    if ( current == null ) {
-      throw new CacheBuilderException();
-    }
-    current.initialCapacity = initialCapacity;
-    return this;
+    return withInitialCapacity(initialCapacity);
   }
 
   public BasicCacheBuilder<K,V> withMaximumCapacity(int maximumCapacity)
       throws CacheBuilderException {
-    if ( current == null ) {
-      throw new CacheBuilderException();
-    }
-    current.maximumCapacity = maximumCapacity;
-    return this;
+    return withMaximumCapacity(maximumCapacity);
   }
 
   public BasicCacheBuilder<K,V> withLoadFactor(float loadFactor)
       throws CacheBuilderException {
-    if ( current == null ) {
-      throw new CacheBuilderException();
-    }
-    current.loadFactor = loadFactor;
-    return this;
+    return withLoadFactor(loadFactor);
   }
 
   public BasicCacheBuilder<K,V> withWritePolicy(WritePolicy writePolicy)
       throws CacheBuilderException {
-    if ( current == null ) {
-      throw new CacheBuilderException();
+    return withWritePolicy(writePolicy);
+  }
+
+  public BasicCacheBuilder<K,V> withManager(Class<? extends BasicCacheManager<K,V>> manager)
+      throws CacheBuilderException {
+    if ( manager == null ) {
+      throw new CacheBuilderException("null cache manager class");
     }
-    current.writePolicy = writePolicy;
-    return this;
-  }
-
-  public BasicCacheBuilder<K,V> withAdapter(Class<? extends BasicCacheAdapter<K,V>> adapterClass) {
-    current = new BasicAdapterConfiguration<K,V>(adapterClass);
-    this.adapters.add(current);
-    return this;
-  }
-
-  public BasicCacheBuilder<K,V> withManager(Class<? extends BasicCacheManager<K,V>> manager) {
     this.managerClass = manager;
     return this;
   }
@@ -73,8 +56,5 @@ public class BasicCacheBuilder<K,V> extends XObject {
     return manager;
   }
 
-  BasicAdapterConfiguration<K,V> current;
-  List<BasicAdapterConfiguration<K,V>> adapters;
   Class<? extends BasicCacheManager<K,V>> managerClass;
-  Map<K,V> initialContent;
 }

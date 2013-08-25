@@ -16,6 +16,11 @@ public class BasicCacheBuilderTest {
     builder = new BasicCacheBuilder<String, Integer>();
   }
 
+  @SuppressWarnings("unchecked")
+  private void setAdapter() throws Exception {
+    builder.withAdapter((Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class);
+  }
+
   @Test
   public void testConstructor() {
     assertNotNull(builder);
@@ -44,7 +49,7 @@ public class BasicCacheBuilderTest {
   }
 
   @Test
-  public void testWithAdapter() {
+  public void testWithAdapter() throws Exception {
     @SuppressWarnings("unchecked")
     Class<? extends BasicCacheAdapter<String, Integer>> adapterClass =
 	(Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
@@ -54,10 +59,8 @@ public class BasicCacheBuilderTest {
   }
 
   @Test
-  public void testWithNullAdapter() {
+  public void testWithNullAdapter() throws Exception {
     builder.withAdapter(null);
-    assertNotNull(builder.current);
-    assertNull(builder.current.adapterClass);
   }
 
   @Test
@@ -86,7 +89,7 @@ public class BasicCacheBuilderTest {
   }
 
   @Test
-  public void testWithManager() {
+  public void testWithManager() throws Exception {
     @SuppressWarnings("unchecked")
     Class<? extends BasicCacheManager<String, Integer>> managerClass =
 	(Class<? extends BasicCacheManager<String, Integer>>) BasicCacheManagerImpl.class;
@@ -116,12 +119,5 @@ public class BasicCacheBuilderTest {
   @Test(expectedExceptions = CacheBuilderException.class)
   public void testWithWritePolicyNoAdapter() throws Exception {
     builder.withWritePolicy(WritePolicy.WRITE_BACK);
-  }
-
-  private void setAdapter() {
-    @SuppressWarnings("unchecked")
-    Class<? extends BasicCacheAdapter<String, Integer>> adapterClass =
-	(Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
-    builder.withAdapter(adapterClass);
   }
 }

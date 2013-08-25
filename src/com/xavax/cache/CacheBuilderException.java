@@ -5,6 +5,10 @@ public class CacheBuilderException extends Exception {
     super(message, cause);
   }
 
+  public CacheBuilderException(String message) {
+    super(message);
+  }
+
   public CacheBuilderException() {
     super(DEFAULT_MESSAGE);
   }
