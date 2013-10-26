@@ -8,5 +8,7 @@ package com.xavax.cache;
 public interface CacheAdapter<K,V> {
   public V get(CacheContext<K,V> context, K key);
 
-  public void put(CacheContext<K,V> context, K key, V value);  
+  public void put(CacheContext<K,V> context, K key, V value, long expireTime);
+
+  public void store(K key, V value, long expires);
 }

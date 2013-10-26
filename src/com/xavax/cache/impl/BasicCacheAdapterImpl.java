@@ -25,7 +25,10 @@ public class BasicCacheAdapterImpl<K,V> implements CacheAdapter<K,V> {
   }
 
   @Override
-  public void put(CacheContext<K,V> context, K key, V value) {    
+  public void put(CacheContext<K,V> context, K key, V value, long expires) {    
   }
 
+  @Override
+  public void store(K key, V value, long expires) {
+  }
 }
