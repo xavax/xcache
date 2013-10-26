@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.xavax.cache.impl.BasicCacheAdapterImpl;
-import com.xavax.cache.impl.BasicCacheManagerImpl;
+import com.xavax.cache.impl.AbstractCacheManagerImpl;
 
 import static org.testng.Assert.*;
 
@@ -19,17 +19,17 @@ import static org.testng.Assert.*;
  * @author alvitar@xavax.com
  *
  */
-public class BasicCacheBuilderTest {
-  private BasicCacheBuilder<String, Integer> builder;
+public class CacheBuilderTest {
+  private CacheBuilder<String, Integer> builder;
 
   @BeforeMethod
   public void setup() {
-    builder = new BasicCacheBuilder<String, Integer>();
+    builder = new CacheBuilder<String, Integer>();
   }
 
   @SuppressWarnings("unchecked")
   private void setAdapter() throws Exception {
-    builder.withAdapter((Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class);
+    builder.withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class);
   }
 
   @Test
@@ -40,18 +40,13 @@ public class BasicCacheBuilderTest {
   @Test
   public void testBuild() throws Exception {
     @SuppressWarnings("unchecked")
-    Class<? extends BasicCacheAdapter<String, Integer>> adapterClass =
-	(Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
-    @SuppressWarnings("unchecked")
-    Class<? extends BasicCacheManager<String, Integer>> managerClass =
-	(Class<? extends BasicCacheManager<String, Integer>>) BasicCacheManagerImpl.class;
-    BasicCacheManager<String, Integer> manager =
-	builder.withManager(managerClass)
-	       .withAdapter(adapterClass)
+    CacheManager<String, Integer> manager =
+	builder.withManager((Class<? extends CacheManager<String, Integer>>) TestCacheManager.class)
+	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class)
 	       .withInitialCapacity(128)
     	       .withMaximumCapacity(256)
     	       .withLoadFactor((float) 0.5)
-    	       .withAdapter(adapterClass)
+    	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class)
     	       .withInitialCapacity(1024)
     	       .withMaximumCapacity(2048)
     	       .withLoadFactor((float) 0.75)
@@ -62,8 +57,8 @@ public class BasicCacheBuilderTest {
   @Test
   public void testWithAdapter() throws Exception {
     @SuppressWarnings("unchecked")
-    Class<? extends BasicCacheAdapter<String, Integer>> adapterClass =
-	(Class<? extends BasicCacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
+    Class<? extends CacheAdapter<String, Integer>> adapterClass =
+	(Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
     builder.withAdapter(adapterClass);
     assertNotNull(builder.current);
     assertEquals(builder.current.adapterClass, adapterClass);
@@ -102,8 +97,8 @@ public class BasicCacheBuilderTest {
   @Test
   public void testWithManager() throws Exception {
     @SuppressWarnings("unchecked")
-    Class<? extends BasicCacheManager<String, Integer>> managerClass =
-	(Class<? extends BasicCacheManager<String, Integer>>) BasicCacheManagerImpl.class;
+    Class<? extends CacheManager<String, Integer>> managerClass =
+	(Class<? extends CacheManager<String, Integer>>) AbstractCacheManagerImpl.class;
     builder.withManager(managerClass);
     assertEquals(builder.managerClass, managerClass);
   }

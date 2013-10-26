@@ -17,5 +17,5 @@ public class XCache {
   }
 
   private final static XProduct product =
-      new XProduct("XCache", 1, 0, 0, 2013, 2013, null);
+      new XProduct("XCache", 1, 0, 0, 2013, 0, null);
 }

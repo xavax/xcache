@@ -5,7 +5,7 @@
 //
 package com.xavax.cache.impl;
 
-import com.xavax.cache.BasicCacheManager;
+import com.xavax.cache.CacheManager;
 import com.xavax.cache.CacheContext;
 
 /**
@@ -17,15 +17,15 @@ import com.xavax.cache.CacheContext;
  *
  * @author alvitar@xavax.com
  */
-public class BasicCacheManagerImpl<K, V> implements BasicCacheManager<K, V> {
+public abstract class AbstractCacheManagerImpl<K, V> implements CacheManager<K, V> {
 
   @Override
-  public V get(CacheContext context, K key) {
+  public V get(CacheContext<K,V> context, K key) {
     return null;
   }
 
   @Override
-  public void put(CacheContext context, K key, V value) {
+  public void put(CacheContext<K,V> context, K key, V value) {
   }
 
 }

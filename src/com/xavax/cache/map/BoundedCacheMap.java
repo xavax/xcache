@@ -9,14 +9,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * BasicCacheMap is a linked hash map that enforces a maximum map size.
+ * BoundedCacheMap is a linked hash map that enforces a maximum map size.
  *
  * @param <K>  the key type for map entries.
  * @param <V>  the value type for map entries.
  *
  * @author alvitar@xavax.com
  */
-public class BasicCacheMap<K, V> extends LinkedHashMap<K, V> {
+public class BoundedCacheMap<K, V> extends LinkedHashMap<K, V> {
 
   public final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
 
@@ -27,7 +27,7 @@ public class BasicCacheMap<K, V> extends LinkedHashMap<K, V> {
    * @param loadFactor       the load factor of the map.
    * @param maxEntries       the maximum number of entries to allow in this map.
    */
-  public BasicCacheMap(int initialCapacity, float loadFactor, int maxEntries) {
+  public BoundedCacheMap(int initialCapacity, float loadFactor, int maxEntries) {
     super(initialCapacity, loadFactor, true);
     this.maxEntries = maxEntries;
   }
@@ -37,7 +37,7 @@ public class BasicCacheMap<K, V> extends LinkedHashMap<K, V> {
    *
    * @param maxEntries       the maximum number of entries to allow in this map.
    */
-  public BasicCacheMap(int maxEntries) {
+  public BoundedCacheMap(int maxEntries) {
     this(maxEntries, DEFAULT_LOAD_FACTOR, maxEntries);
   }
 

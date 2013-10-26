@@ -13,7 +13,7 @@ package com.xavax.cache;
  *
  * @author alvitar@xavax.com
  */
-public class AdapterConfiguration<T> {
+public class AdapterConfiguration<K,V> {
   public final static int DEFAULT_INITIAL_CAPACITY = 512;
   public final static int DEFAULT_MAXIMUM_CAPACITY = 1024;
   public final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
@@ -24,7 +24,7 @@ public class AdapterConfiguration<T> {
    *
    * @param adapterClass  the class of the cache adapter.
    */
-  protected AdapterConfiguration(T adapterClass) {
+  protected AdapterConfiguration(Class<? extends CacheAdapter<K,V>> adapterClass) {
     this.adapterClass = adapterClass;
     this.initialCapacity = DEFAULT_INITIAL_CAPACITY;
     this.maximumCapacity = DEFAULT_MAXIMUM_CAPACITY;
@@ -36,5 +36,5 @@ public class AdapterConfiguration<T> {
   public int maximumCapacity;
   public float loadFactor;
   public WritePolicy writePolicy;
-  public T adapterClass;
+  public Class<? extends CacheAdapter<K,V>> adapterClass;
 }

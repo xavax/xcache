@@ -6,25 +6,25 @@
 package com.xavax.cache.map;
 
 /**
- * BasicCacheMapEntry is an entry in a basic cache and stores the
- * primary key, value, and expire time for this entry.
+ * CacheMapEntry is an entry in a cache and stores the primary key, value, and
+ * expire time for this entry.
  *
- * @param <PK>  the primary key class.
+ * @param <K>  the primary key class.
  * @param <V>   the value class.
  *
  * @author alvitar@xavax.com
  */
-public class BasicCacheMapEntry<PK, V> {
+public class CacheMapEntry<K, V> {
 
   /**
    * Construct a BasicCacheMapEntry with the specified key, value, and expire time.
    *
-   * @param primaryKey  the primary key for this entry.
+   * @param key         the primary key for this entry.
    * @param value       the value for this entry.
-   * @param expireTime  the expire time in seconds for this entry.
+   * @param expireTime  the expire time in milliseconds (Java epoch) for this entry.
    */
-  public BasicCacheMapEntry(PK primaryKey, V value, int expireTime) {
-    this.primaryKey = primaryKey;
+  public CacheMapEntry(K key, V value, long expireTime) {
+    this.key = key;
     this.value = value;
     this.expireTime = expireTime;
   }
@@ -32,8 +32,8 @@ public class BasicCacheMapEntry<PK, V> {
   /**
    * @return the primary key for this entry.
    */
-  public PK primaryKey() {
-    return this.primaryKey;
+  public K key() {
+    return this.key;
   }
 
   /**
@@ -46,11 +46,11 @@ public class BasicCacheMapEntry<PK, V> {
   /**
    * @return the expire time for this entry.
    */
-  public int expireTime() {
+  public long expireTime() {
     return this.expireTime;
   }
 
-  private int expireTime;
-  private PK  primaryKey;
-  private V   value;
+  private long expireTime;
+  private K key;
+  private V value;
 }
