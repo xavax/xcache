@@ -9,7 +9,8 @@ package com.xavax.cache;
  * AdapterConfiguration is a value object by a cache builder's fluent interface
  * to store an adapter's configuration.
  *
- * @param <T>  the adapter class.
+ * @param <K>  the data type for keys in this cache.
+ * @param <V>  the data type for values in this cache.
  *
  * @author alvitar@xavax.com
  */

@@ -8,7 +8,7 @@ package com.xavax.cache;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.xavax.cache.impl.BasicCacheAdapterImpl;
+import com.xavax.cache.impl.LocalBoundedCacheAdapter;
 import com.xavax.cache.impl.AbstractCacheManagerImpl;
 
 import static org.testng.Assert.*;
@@ -29,7 +29,7 @@ public class CacheBuilderTest {
 
   @SuppressWarnings("unchecked")
   private void setAdapter() throws Exception {
-    builder.withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class);
+    builder.withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class);
   }
 
   @Test
@@ -42,11 +42,11 @@ public class CacheBuilderTest {
     @SuppressWarnings("unchecked")
     CacheManager<String, Integer> manager =
 	builder.withManager((Class<? extends CacheManager<String, Integer>>) TestCacheManager.class)
-	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class)
+	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class)
 	       .withInitialCapacity(128)
     	       .withMaximumCapacity(256)
     	       .withLoadFactor((float) 0.5)
-    	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class)
+    	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class)
     	       .withInitialCapacity(1024)
     	       .withMaximumCapacity(2048)
     	       .withLoadFactor((float) 0.75)
@@ -58,10 +58,10 @@ public class CacheBuilderTest {
   public void testWithAdapter() throws Exception {
     @SuppressWarnings("unchecked")
     Class<? extends CacheAdapter<String, Integer>> adapterClass =
-	(Class<? extends CacheAdapter<String, Integer>>) BasicCacheAdapterImpl.class;
+	(Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class;
     builder.withAdapter(adapterClass);
-    assertNotNull(builder.current);
-    assertEquals(builder.current.adapterClass, adapterClass);
+    assertNotNull(builder.currentAdapter);
+    assertEquals(builder.currentAdapter.adapterClass, adapterClass);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)
@@ -73,7 +73,7 @@ public class CacheBuilderTest {
   public void testWithInitialCapacity() throws Exception {
     setAdapter();
     builder.withInitialCapacity(1234);
-    assertEquals(builder.current.initialCapacity, 1234);
+    assertEquals(builder.currentAdapter.initialCapacity, 1234);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)
@@ -86,7 +86,7 @@ public class CacheBuilderTest {
     setAdapter();
     float loadFactor = (float) 0.50;
     builder.withLoadFactor(loadFactor);
-    assertEquals(builder.current.loadFactor, loadFactor);
+    assertEquals(builder.currentAdapter.loadFactor, loadFactor);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)
@@ -107,7 +107,7 @@ public class CacheBuilderTest {
   public void testWithMaximumCapacity() throws Exception {
     setAdapter();
     builder.withMaximumCapacity(4444);
-    assertEquals(builder.current.maximumCapacity, 4444);
+    assertEquals(builder.currentAdapter.maximumCapacity, 4444);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)
@@ -119,7 +119,7 @@ public class CacheBuilderTest {
   public void testWithWritePolicy() throws Exception {
     setAdapter();
     builder.withWritePolicy(WritePolicy.WRITE_BACK);
-    assertEquals(builder.current.writePolicy, WritePolicy.WRITE_BACK);
+    assertEquals(builder.currentAdapter.writePolicy, WritePolicy.WRITE_BACK);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)

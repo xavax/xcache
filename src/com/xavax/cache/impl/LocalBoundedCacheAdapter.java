@@ -9,15 +9,15 @@ import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.CacheContext;
 
 /**
- * BasicCacheAdapter implements a basic cache with primary key and value.
- * It can be one of many adapters in a chain of responsibility.
+ * LocalBoundedCacheAdapter implements a fixed size cache with a least
+ * recently used cast out strategy.
+ *
+ * @author alvitar@xavax.com
  *
  * @param <K>  the primary key class.
  * @param <V>  the value class.
- *
- * @author alvitar@xavax.com
  */
-public class BasicCacheAdapterImpl<K,V> implements CacheAdapter<K,V> {
+public class LocalBoundedCacheAdapter<K,V> implements CacheAdapter<K,V> {
 
   @Override
   public V get(CacheContext<K,V> context, K key) {
@@ -30,5 +30,13 @@ public class BasicCacheAdapterImpl<K,V> implements CacheAdapter<K,V> {
 
   @Override
   public void store(K key, V value, long expires) {
+  }
+
+  @Override
+  public void flush() {
+  }
+
+  @Override
+  public void remove(CacheContext<K, V> context, K key) {
   }
 }

@@ -14,48 +14,48 @@ public class CacheBuilder<K,V> extends XObject {
 
   protected CacheBuilder() {
     adapters = CollectionFactory.arrayList();
-    current = null;
+    currentAdapter = null;
   }
 
   protected CacheBuilder<K,V> withAdapter(Class<? extends CacheAdapter<K,V>> adapterClass) throws CacheBuilderException {
     if ( adapterClass == null ) {
       throw new CacheBuilderException("null cache adapter class");
     }
-    AdapterConfiguration<K,V> configuration = new AdapterConfiguration<>(adapterClass);
+    AdapterConfiguration<K,V> configuration = new AdapterConfiguration<K,V>(adapterClass);
     this.adapters.add(configuration);
-    current = configuration;
+    currentAdapter = configuration;
     return this;
   }
 
   protected CacheBuilder<K,V> withInitialCapacity(int initialCapacity) throws CacheBuilderException {
-    if ( current == null ) {
+    if ( currentAdapter == null ) {
       throw new CacheBuilderException();
     }
-    current.initialCapacity = initialCapacity;
+    currentAdapter.initialCapacity = initialCapacity;
     return this;
   }
 
   protected CacheBuilder<K,V> withMaximumCapacity(int maximumCapacity) throws CacheBuilderException {
-    if ( current == null ) {
+    if ( currentAdapter == null ) {
       throw new CacheBuilderException();
     }
-    current.maximumCapacity = maximumCapacity;
+    currentAdapter.maximumCapacity = maximumCapacity;
     return this;
   }
 
   protected CacheBuilder<K,V> withLoadFactor(float loadFactor) throws CacheBuilderException {
-    if ( current == null ) {
+    if ( currentAdapter == null ) {
       throw new CacheBuilderException();
     }
-    current.loadFactor = loadFactor;
+    currentAdapter.loadFactor = loadFactor;
     return this;
   }
 
   protected CacheBuilder<K,V> withWritePolicy(WritePolicy writePolicy) throws CacheBuilderException {
-    if ( current == null ) {
+    if ( currentAdapter == null ) {
       throw new CacheBuilderException();
     }
-    current.writePolicy = writePolicy;
+    currentAdapter.writePolicy = writePolicy;
     return this;
   }
 
@@ -81,6 +81,6 @@ public class CacheBuilder<K,V> extends XObject {
   }
 
   Class<? extends CacheManager<K,V>> managerClass;
-  AdapterConfiguration<K,V> current;
+  AdapterConfiguration<K,V> currentAdapter;
   List<AdapterConfiguration<K,V>> adapters;
 }

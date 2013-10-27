@@ -6,7 +6,7 @@
 package com.xavax.cache;
 
 /**
- * XBasicCacheManager is the manager for single level caches.
+ * CacheManager is the manager for a cache.
  *
  * @param <K>  the data type for keys in this cache.
  * @param <V>  the data type for values in this cache.
