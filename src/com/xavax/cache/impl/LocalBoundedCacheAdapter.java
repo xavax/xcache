@@ -5,7 +5,6 @@
 //
 package com.xavax.cache.impl;
 
-import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.CacheContext;
 
 /**
@@ -17,10 +16,10 @@ import com.xavax.cache.CacheContext;
  * @param <K>  the primary key class.
  * @param <V>  the value class.
  */
-public class LocalBoundedCacheAdapter<K,V> implements CacheAdapter<K,V> {
+public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
 
   @Override
-  public V get(CacheContext<K,V> context, K key) {
+  public V get(CacheContext<K,V> context, K key, long time) {
     return null;
   }
 

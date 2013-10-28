@@ -5,6 +5,8 @@
 //
 package com.xavax.cache;
 
+import com.xavax.cache.builder.BasicStoreQueueBuilder;
+
 /**
  * StoreQueue implements a store queue for a cache adapter allowing asynchronous
  * writes to the cache.
@@ -33,4 +35,23 @@ public interface StoreQueue<K,V> {
    * @return the data matching the specified key.
    */
   public V get(K key);
+
+  /**
+   * Configure this store queue with values from the specified builder.
+   *
+   * @param builder  the store queue builder containing configuration data.
+   */
+  public void configure(BasicStoreQueueBuilder<K,V> builder);
+
+  /**
+   * Sets the cache adapter associated with this store queue.
+   * 
+   * @param adapter the cache adapter associated with this store queue.
+   */
+  public void setAdapter(CacheAdapter<K, V> adapter);
+
+  /**
+   * Initialize a store queue.
+   */
+  public void init();
 }

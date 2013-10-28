@@ -3,7 +3,7 @@
 // Use of this software is allowed under the Xavax Open Software License.
 // http://www.xavax.com/xosl.html
 //
-package com.xavax.cache;
+package com.xavax.cache.builder;
 
 /**
  * CacheBuilderException is the exception type thrown by cache builders when

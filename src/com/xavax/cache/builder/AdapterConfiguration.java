@@ -3,7 +3,10 @@
 // Use of this software is allowed under the Xavax Open Software License.
 // http://www.xavax.com/xosl.html
 //
-package com.xavax.cache;
+package com.xavax.cache.builder;
+
+import com.xavax.cache.CacheAdapter;
+import com.xavax.cache.WritePolicy;
 
 /**
  * AdapterConfiguration is a value object by a cache builder's fluent interface

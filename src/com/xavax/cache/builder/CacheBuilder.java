@@ -3,11 +3,14 @@
 // Use of this software is allowed under the Xavax Open Software License.
 // http://www.xavax.com/xosl.html
 //
-package com.xavax.cache;
+package com.xavax.cache.builder;
 
 import java.util.List;
 
 import com.xavax.base.XObject;
+import com.xavax.cache.CacheAdapter;
+import com.xavax.cache.CacheManager;
+import com.xavax.cache.WritePolicy;
 import com.xavax.util.CollectionFactory;
 
 public class CacheBuilder<K,V> extends XObject {

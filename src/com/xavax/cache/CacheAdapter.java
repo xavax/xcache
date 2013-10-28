@@ -24,9 +24,10 @@ public interface CacheAdapter<K,V> {
    *
    * @param context  the context for this cache access.
    * @param key      the primary key of the data requested.
+   * @param time     the current time in milliseconds (Java epoch).
    * @return the value matching the key, or null if not found.
    */
-  public V get(CacheContext<K,V> context, K key);
+  public V get(CacheContext<K,V> context, K key, long time);
 
   /**
    * Insert a value into this cache with the specified key.
@@ -54,4 +55,5 @@ public interface CacheAdapter<K,V> {
    * @param expires  the expire time of the data in milliseconds (Java epoch).
    */
   public void store(K key, V value, long expires);
+
 }

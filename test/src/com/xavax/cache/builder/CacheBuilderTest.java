@@ -3,21 +3,26 @@
 // Use of this software is allowed under the Xavax Open Software License.
 // http://www.xavax.com/xosl.html
 //
-package com.xavax.cache;
+package com.xavax.cache.builder;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.xavax.cache.CacheAdapter;
+import com.xavax.cache.CacheManager;
+import com.xavax.cache.ExampleCacheManager;
+import com.xavax.cache.WritePolicy;
+import com.xavax.cache.builder.CacheBuilder;
+import com.xavax.cache.builder.CacheBuilderException;
 import com.xavax.cache.impl.LocalBoundedCacheAdapter;
 import com.xavax.cache.impl.AbstractCacheManagerImpl;
 
 import static org.testng.Assert.*;
 
 /**
- * Test cases for the BasicCacheBuilder class.
+ * Test cases for the CacheBuilder class.
  *
  * @author alvitar@xavax.com
- *
  */
 public class CacheBuilderTest {
   private CacheBuilder<String, Integer> builder;
@@ -41,7 +46,7 @@ public class CacheBuilderTest {
   public void testBuild() throws Exception {
     @SuppressWarnings("unchecked")
     CacheManager<String, Integer> manager =
-	builder.withManager((Class<? extends CacheManager<String, Integer>>) TestCacheManager.class)
+	builder.withManager((Class<? extends CacheManager<String, Integer>>) ExampleCacheManager.class)
 	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class)
 	       .withInitialCapacity(128)
     	       .withMaximumCapacity(256)

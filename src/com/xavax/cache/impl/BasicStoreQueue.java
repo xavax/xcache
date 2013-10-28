@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import com.xavax.cache.StoreQueue;
+import com.xavax.cache.builder.BasicStoreQueueBuilder;
 
 /**
- * StoreQueueImpl implements a store queue for a cache adapter allowing
+ * BasicStoreQueue implements a store queue for a cache adapter allowing
  * asynchronous writes to the cache. The store queue entries preserve the key,
  * value, and expire time until a worker thread is available to perform the
  * cache write operation. Any access to the cache will check for keys in the
@@ -27,16 +27,28 @@ import com.xavax.cache.StoreQueue;
  * @param <K>  the data type for keys in this cache.
  * @param <V>  the data type for values in this cache.
  */
-public class StoreQueueImpl<K, V> extends AbstractStoreQueue<K, V> implements StoreQueue<K, V> {
+public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
 
   /**
    * Construct a store queue for the designated cache adapter.
    */
-  public StoreQueueImpl() {
-    this.minThreads = DEFAULT_MIN_THREADS;
-    this.maxThreads = DEFAULT_MAX_THREADS;
-    this.maxQueueSize = DEFAULT_MAX_QUEUE_SIZE;
-    this.loadFactor = DEFAULT_LOAD_FACTOR;
+  public BasicStoreQueue() {
+    BasicStoreQueueBuilder<K,V> builder = new BasicStoreQueueBuilder<K,V>();
+    configure(builder);
+  }
+
+  /**
+   * Configure this store queue with values from the specified builder.
+   *
+   * @param builder  the store queue builder containing configuration data.
+   */
+  @Override
+  public void configure(BasicStoreQueueBuilder<K,V> builder) {
+    this.keepAliveTime = builder.keepAliveTime;
+    this.minThreads = builder.minThreads;
+    this.maxThreads = builder.maxThreads;
+    this.maxQueueSize = builder.maxQueueSize;
+    this.loadFactor = builder.loadFactor;
   }
 
   /**
@@ -93,55 +105,11 @@ public class StoreQueueImpl<K, V> extends AbstractStoreQueue<K, V> implements St
     return entry == null ? null : entry.value;
   }
 
-  /**
-   * Sets the minimum thread count for worker threads.
-   *
-   * @param minThreads  the minimum number of worker threads.
-   */
-  public void setMinThreads(int minThreads) {
-    this.minThreads = minThreads > 0 ? minThreads : DEFAULT_MIN_THREADS;
-  }
-
-  /**
-   * Sets the maximum thread count for worker threads. This is also
-   * used as the concurrency level of the hash map since it is the
-   * maximum number of threads that could be accessing the hash map.
-   *
-   * @param maxThreads  the maximum number of worker threads.
-   */
-  public void setMaxThreads(int maxThreads) {
-    this.maxThreads = maxThreads > 0 ? maxThreads : DEFAULT_MAX_THREADS;
-  }
-
-  /**
-   * Sets the maximum size of the store queue.
-   *
-   * @param maxQueueSize  the maximum size of the store queue.
-   */
-  public void setMaxQueueSize(int maxQueueSize) {
-    this.maxQueueSize = maxQueueSize > 0 ? maxQueueSize : DEFAULT_MAX_QUEUE_SIZE;
-  }
-
-  /**
-   * Sets the load factor of the hash map used to store the data
-   * that is in the store queue.
-   *
-   * @param loadFactor  the hash map load factor.
-   */
-  public void setLoadFactor(float loadFactor) {
-    this.loadFactor = loadFactor;
-  }
-
-  private final static int DEFAULT_MIN_THREADS = 4;
-  private final static int DEFAULT_MAX_THREADS = 8;
-  private final static int DEFAULT_MAX_QUEUE_SIZE = 256;
-  private final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
-
-  private int minThreads = 5;
-  private int maxThreads = 10;
-  private int maxQueueSize = 64;
-  private int keepAliveTime = 300;
-  private float loadFactor = (float) 0.75;
+  private int minThreads;
+  private int maxThreads;
+  private int maxQueueSize;
+  private int keepAliveTime;
+  private float loadFactor;
   private ConcurrentMap<K, StoreQueueEntry> map;
   private ThreadPoolExecutor executor;
 
@@ -159,7 +127,7 @@ public class StoreQueueImpl<K, V> extends AbstractStoreQueue<K, V> implements St
      * @param value    the data to be stored in the cache.
      * @param expires  the time when the data expires (Java epoch).
      */
-    public StoreQueueEntry(StoreQueueImpl<K, V> queue, K key, V value,
+    public StoreQueueEntry(BasicStoreQueue<K, V> queue, K key, V value,
 			   long expires) {
       this.queue = queue;
       this.key = key;
@@ -178,7 +146,7 @@ public class StoreQueueImpl<K, V> extends AbstractStoreQueue<K, V> implements St
     public final long expires;
     public final K key;
     public final V value;
-    public final StoreQueueImpl<K, V> queue;
+    public final BasicStoreQueue<K, V> queue;
   }
 
 }
