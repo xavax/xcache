@@ -9,6 +9,6 @@
 	<classpathentry kind="var" path="TOMCAT"/>
 	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
 	<classpathentry kind="lib" path="etc"/>
-	<classpathentry kind="lib" path="/Users/alvitar/Workspaces/xavax/xcore/xcore.jar"/>
+	<classpathentry kind="var" path="COMMON/xavax/xcore/1.0.0/xcore.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
