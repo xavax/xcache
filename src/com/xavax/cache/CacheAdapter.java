@@ -5,6 +5,8 @@
 //
 package com.xavax.cache;
 
+import com.xavax.cache.builder.CacheAdapterBuilder;
+
 /**
  * CacheAdapter is the interface for all cache adapters in XCache.
  *
@@ -56,4 +58,15 @@ public interface CacheAdapter<K,V> {
    */
   public void store(K key, V value, long expires);
 
+  /**
+   * Configure this cache adapter with values from the specified builder.
+   *
+   * @param builder  the builder containing configuration data.
+   */
+  public void configure(CacheAdapterBuilder<K,V> builder);
+
+  /**
+   * Initialize this cache adapter.
+   */
+  public void init();
 }

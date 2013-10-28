@@ -8,7 +8,7 @@ package com.xavax.cache.impl;
 import com.xavax.base.XObject;
 import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.StoreQueue;
-import com.xavax.cache.builder.BasicStoreQueueBuilder;
+import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 
 /**
  * AbstractStoreQueue is the base class for all store queues.

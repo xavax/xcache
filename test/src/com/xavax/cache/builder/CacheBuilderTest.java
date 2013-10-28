@@ -32,11 +32,6 @@ public class CacheBuilderTest {
     builder = new CacheBuilder<String, Integer>();
   }
 
-  @SuppressWarnings("unchecked")
-  private void setAdapter() throws Exception {
-    builder.withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class);
-  }
-
   @Test
   public void testConstructor() {
     assertNotNull(builder);
@@ -47,15 +42,7 @@ public class CacheBuilderTest {
     @SuppressWarnings("unchecked")
     CacheManager<String, Integer> manager =
 	builder.withManager((Class<? extends CacheManager<String, Integer>>) ExampleCacheManager.class)
-	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class)
-	       .withInitialCapacity(128)
-    	       .withMaximumCapacity(256)
-    	       .withLoadFactor((float) 0.5)
-    	       .withAdapter((Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class)
-    	       .withInitialCapacity(1024)
-    	       .withMaximumCapacity(2048)
-    	       .withLoadFactor((float) 0.75)
-    	       .build();
+		.build();
     assertNotNull(manager);
   }
 
@@ -64,39 +51,14 @@ public class CacheBuilderTest {
     @SuppressWarnings("unchecked")
     Class<? extends CacheAdapter<String, Integer>> adapterClass =
 	(Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class;
-    builder.withAdapter(adapterClass);
-    assertNotNull(builder.currentAdapter);
-    assertEquals(builder.currentAdapter.adapterClass, adapterClass);
+//    builder.withAdapter(adapterClass);
+//    assertNotNull(builder.currentAdapter);
+//    assertEquals(builder.currentAdapter.adapterClass, adapterClass);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)
   public void testWithNullAdapter() throws Exception {
     builder.withAdapter(null);
-  }
-
-  @Test
-  public void testWithInitialCapacity() throws Exception {
-    setAdapter();
-    builder.withInitialCapacity(1234);
-    assertEquals(builder.currentAdapter.initialCapacity, 1234);
-  }
-
-  @Test(expectedExceptions = CacheBuilderException.class)
-  public void testWithInitialCapacityNoAdapter() throws Exception {
-    builder.withInitialCapacity(1234);
-  }
-
-  @Test
-  public void testWithLoadFactor() throws Exception {
-    setAdapter();
-    float loadFactor = (float) 0.50;
-    builder.withLoadFactor(loadFactor);
-    assertEquals(builder.currentAdapter.loadFactor, loadFactor);
-  }
-
-  @Test(expectedExceptions = CacheBuilderException.class)
-  public void testWithLoadFactorNoAdapter() throws Exception {
-    builder.withLoadFactor(0);
   }
 
   @Test
@@ -106,25 +68,6 @@ public class CacheBuilderTest {
 	(Class<? extends CacheManager<String, Integer>>) AbstractCacheManagerImpl.class;
     builder.withManager(managerClass);
     assertEquals(builder.managerClass, managerClass);
-  }
-
-  @Test
-  public void testWithMaximumCapacity() throws Exception {
-    setAdapter();
-    builder.withMaximumCapacity(4444);
-    assertEquals(builder.currentAdapter.maximumCapacity, 4444);
-  }
-
-  @Test(expectedExceptions = CacheBuilderException.class)
-  public void testWithMaximumCapacityNoAdapter() throws Exception {
-    builder.withMaximumCapacity(4444);
-  }
-
-  @Test
-  public void testWithWritePolicy() throws Exception {
-    setAdapter();
-    builder.withWritePolicy(WritePolicy.WRITE_BACK);
-    assertEquals(builder.currentAdapter.writePolicy, WritePolicy.WRITE_BACK);
   }
 
   @Test(expectedExceptions = CacheBuilderException.class)

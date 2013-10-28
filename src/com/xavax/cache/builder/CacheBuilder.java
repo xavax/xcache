@@ -8,7 +8,6 @@ package com.xavax.cache.builder;
 import java.util.List;
 
 import com.xavax.base.XObject;
-import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.CacheManager;
 import com.xavax.cache.WritePolicy;
 import com.xavax.util.CollectionFactory;
@@ -16,49 +15,19 @@ import com.xavax.util.CollectionFactory;
 public class CacheBuilder<K,V> extends XObject {
 
   protected CacheBuilder() {
-    adapters = CollectionFactory.arrayList();
-    currentAdapter = null;
+    adapterBuilders = CollectionFactory.arrayList();
   }
 
-  protected CacheBuilder<K,V> withAdapter(Class<? extends CacheAdapter<K,V>> adapterClass) throws CacheBuilderException {
-    if ( adapterClass == null ) {
-      throw new CacheBuilderException("null cache adapter class");
-    }
-    AdapterConfiguration<K,V> configuration = new AdapterConfiguration<K,V>(adapterClass);
-    this.adapters.add(configuration);
-    currentAdapter = configuration;
+  protected CacheBuilder<K,V> withWritePolicy(WritePolicy writePolicy) {
+    this.writePolicy = writePolicy;
     return this;
   }
 
-  protected CacheBuilder<K,V> withInitialCapacity(int initialCapacity) throws CacheBuilderException {
-    if ( currentAdapter == null ) {
-      throw new CacheBuilderException();
+  protected CacheBuilder<K,V> withAdapter(CacheAdapterBuilder<K,V> builder) throws CacheBuilderException {
+    if ( builder == null ) {
+      throw new CacheBuilderException("null cache adapter builder");
     }
-    currentAdapter.initialCapacity = initialCapacity;
-    return this;
-  }
-
-  protected CacheBuilder<K,V> withMaximumCapacity(int maximumCapacity) throws CacheBuilderException {
-    if ( currentAdapter == null ) {
-      throw new CacheBuilderException();
-    }
-    currentAdapter.maximumCapacity = maximumCapacity;
-    return this;
-  }
-
-  protected CacheBuilder<K,V> withLoadFactor(float loadFactor) throws CacheBuilderException {
-    if ( currentAdapter == null ) {
-      throw new CacheBuilderException();
-    }
-    currentAdapter.loadFactor = loadFactor;
-    return this;
-  }
-
-  protected CacheBuilder<K,V> withWritePolicy(WritePolicy writePolicy) throws CacheBuilderException {
-    if ( currentAdapter == null ) {
-      throw new CacheBuilderException();
-    }
-    currentAdapter.writePolicy = writePolicy;
+    this.adapterBuilders.add(builder);
     return this;
   }
 
@@ -83,7 +52,7 @@ public class CacheBuilder<K,V> extends XObject {
     return manager;
   }
 
+  WritePolicy writePolicy;
   Class<? extends CacheManager<K,V>> managerClass;
-  AdapterConfiguration<K,V> currentAdapter;
-  List<AdapterConfiguration<K,V>> adapters;
+  List<CacheAdapterBuilder<K,V>> adapterBuilders;
 }

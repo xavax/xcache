@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import com.xavax.cache.builder.BasicStoreQueueBuilder;
+import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 
 /**
  * BasicStoreQueue implements a store queue for a cache adapter allowing

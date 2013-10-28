@@ -5,7 +5,7 @@
 //
 package com.xavax.cache;
 
-import com.xavax.cache.builder.BasicStoreQueueBuilder;
+import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 
 /**
  * StoreQueue implements a store queue for a cache adapter allowing asynchronous
