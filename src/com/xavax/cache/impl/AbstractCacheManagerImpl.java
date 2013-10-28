@@ -5,6 +5,8 @@
 //
 package com.xavax.cache.impl;
 
+import javax.annotation.PostConstruct;
+
 import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.CacheManager;
 import com.xavax.cache.CacheContext;
@@ -19,6 +21,16 @@ import com.xavax.cache.CacheContext;
  * @author alvitar@xavax.com
  */
 public abstract class AbstractCacheManagerImpl<K, V> implements CacheManager<K, V> {
+
+  /**
+   * Start this cache.
+   */
+  @PostConstruct
+  public void start() {
+    for ( CacheAdapter<K,V> adapter : adapters ) {
+      adapter.start();
+    }
+  }
 
   /**
    * Retrieve the value associated with the specified key from the cache.

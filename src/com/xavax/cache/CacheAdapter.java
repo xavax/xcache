@@ -66,7 +66,14 @@ public interface CacheAdapter<K,V> {
   public void configure(CacheAdapterBuilder<K,V> builder);
 
   /**
+   * Set the store queue for this cache adapter.
+   *
+   * @param storeQueue  the store queue.
+   */
+  public void storeQueue(StoreQueue<K,V> storeQueue);
+
+  /**
    * Initialize this cache adapter.
    */
-  public void init();
+  public void start();
 }

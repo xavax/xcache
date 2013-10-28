@@ -5,8 +5,6 @@
 //
 package com.xavax.cache.impl;
 
-import javax.annotation.PostConstruct;
-
 import com.xavax.cache.CacheContext;
 import com.xavax.cache.builder.CacheAdapterBuilder;
 import com.xavax.cache.builder.impl.LocalBoundedCacheAdapterBuilder;
@@ -118,9 +116,9 @@ public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
    * Initialize this cache adapter.
    */
   @Override
-  @PostConstruct
-  public void init() {
+  public void start() {
     assert(initialCapacity > 0 && maximumCapacity >= initialCapacity && loadFactor > 0);
+    super.start();
     map = new BoundedCacheMap<K,CacheMapEntry<K,V>>(initialCapacity, loadFactor, maximumCapacity);
   }
 

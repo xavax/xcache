@@ -29,7 +29,6 @@ public class LocalBoundedCacheAdapterBuilder<K,V> extends AbstractCacheAdapterBu
   public int initialCapacity;
   public int maximumCapacity;
   public float loadFactor;
-  public Class<? extends LocalBoundedCacheAdapter<K,V>> adapterClass;
 
   /**
    * Construct a L with the specified adapter class.
@@ -59,23 +58,7 @@ public class LocalBoundedCacheAdapterBuilder<K,V> extends AbstractCacheAdapterBu
    */
   @Override
   public LocalBoundedCacheAdapter<K,V> build() throws CacheBuilderException {
-    LocalBoundedCacheAdapter<K,V> adapter = null;
-    if ( this.adapterClass == null ) {
-      throw new CacheBuilderException("null adapter class");
-    }
-    else {
-      try {
-	adapter = this.adapterClass.newInstance();
-	if ( adapter != null ) {
-	  adapter.configure(this);
-	}
-      }
-      catch (Exception e) {
-	throw new CacheBuilderException("failed to instantiate adapter class " +
-	    adapterClass.getSimpleName(), e);
-      }
-    }
-    return adapter;
+    return (LocalBoundedCacheAdapter<K,V>) super.build();
   }
 
   /**
@@ -86,8 +69,18 @@ public class LocalBoundedCacheAdapterBuilder<K,V> extends AbstractCacheAdapterBu
    */
   public LocalBoundedCacheAdapterBuilder<K,V>
   withAdapterClass(Class<? extends LocalBoundedCacheAdapter<K,V>> adapterClass) {
-    this.adapterClass = adapterClass;
+    super.setAdapterClass(adapterClass);
     return this;
+  }
+
+  /**
+   * Set the adapter name.
+   *
+   * @param name  the adapter name.
+   * @return this builder.
+   */
+  public LocalBoundedCacheAdapterBuilder<K,V> withName(String name) {
+    return (LocalBoundedCacheAdapterBuilder<K,V>) super.withName(name);
   }
 
   /**

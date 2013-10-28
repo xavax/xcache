@@ -11,8 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
+import com.xavax.cache.builder.StoreQueueBuilder;
 import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 
 /**
@@ -43,20 +42,22 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @param builder  the store queue builder containing configuration data.
    */
   @Override
-  public void configure(BasicStoreQueueBuilder<K,V> builder) {
-    this.keepAliveTime = builder.keepAliveTime;
-    this.minThreads = builder.minThreads;
-    this.maxThreads = builder.maxThreads;
-    this.maxQueueSize = builder.maxQueueSize;
-    this.loadFactor = builder.loadFactor;
+  public void configure(StoreQueueBuilder<K,V> builder) {
+    if ( builder instanceof BasicStoreQueueBuilder ) {
+      BasicStoreQueueBuilder<K,V> bsqb = (BasicStoreQueueBuilder<K,V>) builder;
+      this.keepAliveTime = bsqb.keepAliveTime;
+      this.minThreads = bsqb.minThreads;
+      this.maxThreads = bsqb.maxThreads;
+      this.maxQueueSize = bsqb.maxQueueSize;
+      this.loadFactor = bsqb.loadFactor;
+    }
   }
 
   /**
    * Initialize a store queue by creating the thread pool executor
    * and hash map of data in the queue.
    */
-  @PostConstruct
-  public void init() {
+  public void start() {
     if ( maxThreads < minThreads ) {
       maxThreads = minThreads;
     }

@@ -67,4 +67,9 @@ public interface CacheManager<K,V> {
    * @return the value class for this cache.
    */
   public Class<? extends Object> valueClass();
+
+  /**
+   * Initialize this cache.
+   */
+  public void start();
 }

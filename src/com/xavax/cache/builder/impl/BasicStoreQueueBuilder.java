@@ -5,12 +5,18 @@
 //
 package com.xavax.cache.builder.impl;
 
-import com.xavax.base.XObject;
 import com.xavax.cache.builder.CacheBuilderException;
-import com.xavax.cache.builder.StoreQueueBuilder;
 import com.xavax.cache.impl.BasicStoreQueue;
 
-public class BasicStoreQueueBuilder<K,V> extends XObject implements StoreQueueBuilder<K, V> {
+/**
+ * BasicStoreQueueBuilder provides a fluent interface to build a BasicStoreQueue.
+ *
+ * @author alvitar@xavax.com
+ *
+ * @param <K>  the primary key class.
+ * @param <V>  the value class.
+ */
+public class BasicStoreQueueBuilder<K,V> extends AbstractStoreQueueBuilder<K, V> {
 
   public final static int DEFAULT_KEEP_ALIVE_TIME = 300;
   public final static int DEFAULT_MIN_THREADS = 4;
@@ -18,28 +24,14 @@ public class BasicStoreQueueBuilder<K,V> extends XObject implements StoreQueueBu
   public final static int DEFAULT_MAX_QUEUE_SIZE = 256;
   public final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
 
-  /* (non-Javadoc)
-   * @see com.xavax.cache.builder.StoreQueueBuilder#build()
+  /**
+   * Build a store queue.
+   *
+   * @return a configured store queue.
    */
   @Override
   public BasicStoreQueue<K,V> build() throws CacheBuilderException {
-    BasicStoreQueue<K,V> storeQueue = null;
-    if ( this.storeQueueClass == null ) {
-      throw new CacheBuilderException("null store queue class");
-    }
-    else {
-      try {
-	storeQueue = this.storeQueueClass.newInstance();
-	if ( storeQueue != null ) {
-	  storeQueue.configure(this);
-	}
-      }
-      catch (Exception e) {
-	throw new CacheBuilderException("failed to instantiate store queue class " +
-	    storeQueueClass.getSimpleName(), e);
-      }
-    }
-    return storeQueue;
+    return (BasicStoreQueue<K,V>) super.build();
   }
 
   /**
@@ -48,7 +40,7 @@ public class BasicStoreQueueBuilder<K,V> extends XObject implements StoreQueueBu
    * @param storeQueueClass  the class of the store queue.
    */
   public BasicStoreQueueBuilder<K, V> withStoreQueueClass(Class<? extends BasicStoreQueue<K,V>> storeQueueClass) {
-    this.storeQueueClass = storeQueueClass;
+    super.setStoreQueueClass(storeQueueClass);
     return this;
   }
 
@@ -111,5 +103,4 @@ public class BasicStoreQueueBuilder<K,V> extends XObject implements StoreQueueBu
   public int maxThreads = DEFAULT_MAX_THREADS;
   public int maxQueueSize = DEFAULT_MAX_QUEUE_SIZE;
   public float loadFactor = DEFAULT_LOAD_FACTOR;
-  protected Class<? extends BasicStoreQueue<K,V>> storeQueueClass;
 }

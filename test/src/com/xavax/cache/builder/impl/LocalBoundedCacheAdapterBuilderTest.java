@@ -56,4 +56,21 @@ public class LocalBoundedCacheAdapterBuilderTest {
     assertNotNull(adapter);
   }
 
+  @Test
+  public void testNoStoreQueue() throws Exception {
+    LocalBoundedCacheAdapterBuilder<String, String> builder =
+	new LocalBoundedCacheAdapterBuilder<String, String>();
+    builder
+	.withAdapterClass(ADAPTER_CLASS)
+	.withInitialCapacity(INITIAL_CAPACITY)
+	.withMaximumCapacity(MAXIMUM_CAPACITY)
+	.withLoadFactor(LOAD_FACTOR);
+    assertEquals(builder.adapterClass, ADAPTER_CLASS);
+    assertEquals(builder.initialCapacity, INITIAL_CAPACITY);
+    assertEquals(builder.maximumCapacity, MAXIMUM_CAPACITY);
+    assertEquals(builder.loadFactor, LOAD_FACTOR);
+    assertNull(builder.storeQueueBuilder);
+    LocalBoundedCacheAdapter<String,String> adapter = builder.build();
+    assertNotNull(adapter);
+  }
 }

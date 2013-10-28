@@ -5,7 +5,10 @@
 //
 package com.xavax.cache.builder.impl;
 
+import com.xavax.cache.CacheAdapter;
+import com.xavax.cache.StoreQueue;
 import com.xavax.cache.builder.CacheAdapterBuilder;
+import com.xavax.cache.builder.CacheBuilderException;
 import com.xavax.cache.builder.StoreQueueBuilder;
 
 /**
@@ -17,13 +20,61 @@ import com.xavax.cache.builder.StoreQueueBuilder;
  * @param <V>  the value class.
  */
 public abstract class AbstractCacheAdapterBuilder<K, V> implements CacheAdapterBuilder<K,V> {
+  protected String name;
   protected StoreQueueBuilder<K,V> storeQueueBuilder;
+  protected Class<? extends CacheAdapter<K,V>> adapterClass;
 
   /**
    * Construct an AbstractCacheAdapterBuilder
    */
   public AbstractCacheAdapterBuilder() {
-    storeQueueBuilder = null;
+    this.name = null;
+    this.adapterClass = null;
+    this.storeQueueBuilder = null;
+  }
+
+  /**
+   * Build a cache adapter.
+   *
+   * @return a configured cache adapter.
+   * @throws CacheBuilderException 
+   */
+  @Override
+  public CacheAdapter<K,V> build() throws CacheBuilderException {
+    CacheAdapter<K,V> adapter = null;
+    if ( this.adapterClass == null ) {
+      throw new CacheBuilderException("null adapter class");
+    }
+    else {
+      try {
+	adapter = this.adapterClass.newInstance();
+	if (adapter != null) {
+	  adapter.configure(this);
+	  if ( storeQueueBuilder == null ) {
+	    storeQueueBuilder = new NullStoreQueueBuilder<K,V>();
+	  }
+	  StoreQueue<K, V> storeQueue = storeQueueBuilder.build();
+	  storeQueue.configure(storeQueueBuilder);
+	  storeQueue.setAdapter(adapter);
+	  adapter.storeQueue(storeQueue);
+	}
+      }
+      catch (Exception e) {
+	throw new CacheBuilderException("failed to instantiate adapter class " +
+	    adapterClass.getSimpleName(), e);
+      }
+    }
+    return adapter;
+  }
+
+  /**
+   * Set the adapter class.
+   *
+   * @param adapterClass  the adapter class.
+   * @return this builder.
+   */
+  public void setAdapterClass(Class<? extends CacheAdapter<K,V>> adapterClass) {
+    this.adapterClass = adapterClass;
   }
 
   /**
@@ -33,7 +84,18 @@ public abstract class AbstractCacheAdapterBuilder<K, V> implements CacheAdapterB
    * @return this builder.
    */
   public AbstractCacheAdapterBuilder<K, V> withStoreQueue(StoreQueueBuilder<K,V> builder) {
-    storeQueueBuilder = builder;
+    this.storeQueueBuilder = builder;
+    return this;
+  }
+
+  /**
+   * Set the adapter name.
+   *
+   * @param name  the adapter name.
+   * @return this builder.
+   */
+  public AbstractCacheAdapterBuilder<K, V> withName(String name) {
+    this.name = name;
     return this;
   }
 }

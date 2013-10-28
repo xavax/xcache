@@ -8,7 +8,7 @@ package com.xavax.cache.impl;
 import com.xavax.base.XObject;
 import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.StoreQueue;
-import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
+import com.xavax.cache.builder.StoreQueueBuilder;
 
 /**
  * AbstractStoreQueue is the base class for all store queues.
@@ -42,14 +42,14 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    * @param builder  the store queue builder containing configuration data.
    */
   @Override
-  public void configure(BasicStoreQueueBuilder<K,V> builder) {
+  public void configure(StoreQueueBuilder<K,V> builder) {
   }
 
   /**
    * Initialize a store queue.
    */
   @Override
-  public void init(){
+  public void start(){
   }
 
   protected CacheAdapter<K, V> adapter;
