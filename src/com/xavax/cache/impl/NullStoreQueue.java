@@ -5,6 +5,8 @@
 //
 package com.xavax.cache.impl;
 
+import com.xavax.cache.StoreQueueEntry;
+
 /**
  * NullStoreQueue does not implement asynchronous writes to the cache
  * and simply passes all store operations directly to the cache adapter.
@@ -29,6 +31,16 @@ public class NullStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
   }
 
   /**
+   * Execute an entry in the store queue, then remove the
+   * key and value from the map and return the entry to
+   * the free queue.
+   * 
+   * @param entry the store queue entry.
+   */
+  public void execute(StoreQueueEntry<K,V> entry) {    
+  }
+
+  /**
    * Check the store queue for data matching the specified key, or null
    * if no match was found.
    *
@@ -36,7 +48,7 @@ public class NullStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @return the data matching the specified key.
    */
   @Override
-  public V get(K key) {
+  public StoreQueueEntry<K,V> get(K key) {
     return null;
   }
 

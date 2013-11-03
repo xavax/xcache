@@ -47,7 +47,7 @@ public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
    * @return the value matching the key, or null if not found.
    */
   @Override
-  public V get(CacheContext<K,V> context, K key, long time) {
+  protected V doGet(CacheContext<K,V> context, K key, long time) {
     V result = null;
     CacheMapEntry<K,V> entry = map.get(key);
     if ( entry != null ) {

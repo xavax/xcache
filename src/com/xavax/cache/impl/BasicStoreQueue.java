@@ -5,12 +5,14 @@
 //
 package com.xavax.cache.impl;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.xavax.cache.StoreQueueEntry;
 import com.xavax.cache.builder.StoreQueueBuilder;
 import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 
@@ -20,6 +22,17 @@ import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
  * value, and expire time until a worker thread is available to perform the
  * cache write operation. Any access to the cache will check for keys in the
  * store queue.
+ *
+ * There are several objects involved.
+ * - A store queue entry encapsulates a key, value, and expire time.
+ *   To minimize object creation overhead, a fixed number of store queue
+ *   entries are created and reused.
+ * - A concurrent hash map stores data waiting in the queue. It is used
+ *   as a look-aside cache.
+ * - There are separate queues for busy and free store queue entries.
+ * - A thread pool executor manages the working threads that write data
+ *   to the cache. As each entry is dispatched, the associated data is
+ *   removed from the hash map and the entry returned to the free queue.
  * 
  * @author alvitar@xavax.com
  *
@@ -46,31 +59,41 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
     if ( builder instanceof BasicStoreQueueBuilder ) {
       BasicStoreQueueBuilder<K,V> bsqb = (BasicStoreQueueBuilder<K,V>) builder;
       this.keepAliveTime = bsqb.keepAliveTime;
-      this.minThreads = bsqb.minThreads;
-      this.maxThreads = bsqb.maxThreads;
-      this.maxQueueSize = bsqb.maxQueueSize;
-      this.loadFactor = bsqb.loadFactor;
+      this.minThreads    = bsqb.minThreads;
+      this.maxThreads    = bsqb.maxThreads;
+      this.maxQueueSize  = bsqb.maxQueueSize;
+      this.loadFactor    = bsqb.loadFactor;
     }
   }
 
   /**
-   * Initialize a store queue by creating the thread pool executor
-   * and hash map of data in the queue.
+   * Initialize a store queue by creating the thread pool executor,
+   * separate queues for free and busy store queue entries, and a
+   * hash map of data waiting in the queue.
    */
+  @Override
   public void start() {
+    super.start();
     if ( maxThreads < minThreads ) {
       maxThreads = minThreads;
     }
-    this.map = new ConcurrentHashMap<K, StoreQueueEntry>(maxQueueSize * 2,
+    int freeQueueSize = maxQueueSize + (FREE_QUEUE_MULTIPLIER * maxThreads);
+    busyQueue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
+    freeQueue = new LinkedBlockingQueue<StoreQueueEntry<K,V>>(freeQueueSize);
+    for ( int i = 0; i < freeQueueSize; ++i ) {
+      freeQueue.add(new StoreQueueEntry<K,V>(this));
+    }
+    map = new ConcurrentHashMap<K, StoreQueueEntry<K,V>>(maxQueueSize * MAP_MULTIPLIER,
 	loadFactor, maxThreads);
-    this.executor = new ThreadPoolExecutor(minThreads, maxThreads,
-	keepAliveTime, TimeUnit.SECONDS,
-	new ArrayBlockingQueue<Runnable>(maxQueueSize),
+    executor = new ThreadPoolExecutor(minThreads, maxThreads,
+	keepAliveTime, TimeUnit.SECONDS, busyQueue,
 	new ThreadPoolExecutor.CallerRunsPolicy());
   }
 
   /**
-   * Add an entry to the cache store queue.
+   * If the store queue is full, immediately perform the write
+   * (caller runs); otherwise, add an entry to the store queue
+   * and insert the key and value into the map.
    * 
    * @param key the primary key for the cache data.
    * @param value the data to be stored in the cache.
@@ -78,20 +101,32 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    */
   @Override
   public void store(K key, V value, long expires) {
-    StoreQueueEntry entry =
-	new StoreQueueEntry(this, key, value, expires);
-    map.put(key, entry);
-    executor.execute(entry);
+    StoreQueueEntry<K,V> entry = this.freeQueue.poll();
+    if ( entry == null ) {
+      adapter.store(key, value, expires);
+    }
+    else {
+      entry.init(key, value, expires);
+      map.put(key, entry);
+      executor.execute(entry);
+      queueCount.incrementAndGet();
+    }
+    storeCount.incrementAndGet();
   }
 
   /**
-   * Execute an entry in the store queue.
+   * Execute an entry in the store queue, then remove the
+   * key and value from the map and return the entry to
+   * the free queue.
    * 
    * @param entry the store queue entry.
    */
-  public void execute(StoreQueueEntry entry) {
-    adapter.store(entry.key, entry.value, entry.expires);
-    map.remove(entry.key, entry);
+  public void execute(StoreQueueEntry<K,V> entry) {
+    K key = entry.key();
+    adapter.store(key, entry.value(), entry.expires());
+    map.remove(key, entry);
+    entry.clear();
+    freeQueue.add(entry);
   }
 
   /**
@@ -101,53 +136,21 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @param key the primary key of the cache entry.
    * @return the data matching the specified key.
    */
-  public V get(K key) {
-    StoreQueueEntry entry = map.get(key);
-    return entry == null ? null : entry.value;
+  public StoreQueueEntry<K,V> get(K key) {
+    StoreQueueEntry<K,V> entry = map.get(key);
+    return entry == null ? null : new StoreQueueEntry<K,V>(entry);
   }
+
+  private final static int FREE_QUEUE_MULTIPLIER = 2;
+  private final static int MAP_MULTIPLIER = 2;
 
   private int minThreads;
   private int maxThreads;
   private int maxQueueSize;
   private int keepAliveTime;
   private float loadFactor;
-  private ConcurrentMap<K, StoreQueueEntry> map;
+  private BlockingQueue<Runnable> busyQueue;
+  private BlockingQueue<StoreQueueEntry<K,V>> freeQueue;
+  private ConcurrentMap<K, StoreQueueEntry<K,V>> map;
   private ThreadPoolExecutor executor;
-
-  /**
-   * StoreQueueEntry encapsulates an entry in the cache store queue and contains
-   * all information necessary to complete the cache write transaction.
-   */
-  public class StoreQueueEntry implements Runnable {
-
-    /**
-     * Construct a StoreQueueEntry.
-     * 
-     * @param queue    the store queue to which this entry is associated.
-     * @param key      the primary key for the cache data.
-     * @param value    the data to be stored in the cache.
-     * @param expires  the time when the data expires (Java epoch).
-     */
-    public StoreQueueEntry(BasicStoreQueue<K, V> queue, K key, V value,
-			   long expires) {
-      this.queue = queue;
-      this.key = key;
-      this.value = value;
-      this.expires = expires;
-    }
-
-    /**
-     * Perform the cache write operation.
-     */
-    @Override
-    public void run() {
-      queue.execute(this);
-    }
-
-    public final long expires;
-    public final K key;
-    public final V value;
-    public final BasicStoreQueue<K, V> queue;
-  }
-
 }

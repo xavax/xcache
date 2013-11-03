@@ -5,6 +5,7 @@
 //
 package com.xavax.cache.builder.impl;
 
+import com.xavax.cache.StoreQueue;
 import com.xavax.cache.builder.CacheBuilderException;
 import com.xavax.cache.impl.BasicStoreQueue;
 
@@ -23,6 +24,15 @@ public class BasicStoreQueueBuilder<K,V> extends AbstractStoreQueueBuilder<K, V>
   public final static int DEFAULT_MAX_THREADS = 8;
   public final static int DEFAULT_MAX_QUEUE_SIZE = 256;
   public final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
+
+  @SuppressWarnings("rawtypes")
+  private final static Class<? extends StoreQueue> DEFAULT_STORE_QUEUE_CLASS =
+      (Class<? extends StoreQueue>) BasicStoreQueue.class;
+
+  @SuppressWarnings("unchecked")
+  public BasicStoreQueueBuilder() {
+    super.setStoreQueueClass((Class<? extends StoreQueue<K, V>>) DEFAULT_STORE_QUEUE_CLASS);
+  }
 
   /**
    * Build a store queue.
