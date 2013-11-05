@@ -85,7 +85,7 @@ public class StoreQueueEntry<K,V> implements Runnable {
    */
   @Override
   public void run() {
-    storeQueue.execute(this);
+    storeQueue.complete(this);
   }
 
   private long expires;

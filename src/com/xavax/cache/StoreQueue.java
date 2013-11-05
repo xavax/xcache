@@ -37,9 +37,9 @@ public interface StoreQueue<K,V> {
   public StoreQueueEntry<K,V> get(K key);
 
   /**
-   * Execute the store operation. Called when a worker thread is available.
+   * Complete the store operation. Called when a worker thread is available.
    */
-  public void execute(StoreQueueEntry<K,V> entry);
+  public void complete(StoreQueueEntry<K,V> entry);
 
   /**
    * Configure this store queue with values from the specified builder.

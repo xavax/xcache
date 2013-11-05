@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.xavax.base.XObject;
 import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.StoreQueue;
+import com.xavax.cache.StoreQueueEntry;
 import com.xavax.cache.StoreQueueMBean;
 import com.xavax.cache.builder.StoreQueueBuilder;
 
@@ -55,6 +56,10 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
   public void start(){
     queueCount = new AtomicLong();
     storeCount = new AtomicLong();
+    if ( keepStatistics ) {
+      completionTimeMetric = new TimeMetric(100);
+      requestTimeMetric = new TimeMetric(100);
+    }
   }
 
   /**
@@ -83,7 +88,87 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
     storeCount.set(0);
   }
 
+  /**
+   * Returns the metrics for store operations.
+   *
+   * @return the metrics for store operations.
+   */
+  public TimeMetric.Result getCompletionMetrics() {
+    return keepStatistics ? completionTimeMetric.result() : null;
+  }
+
+  /**
+   * Returns the metrics for store requests.
+   *
+   * @return the metrics for store requests.
+   */
+  public TimeMetric.Result getRequestMetrics() {
+    return keepStatistics ? requestTimeMetric.result() : null;
+  }
+
+  /**
+   * Complete a store operation in the store queue, then remove
+   * the key and value from the map and return the entry to
+   * the free queue.
+   * 
+   * @param entry the store queue entry.
+   */
+  public void complete(StoreQueueEntry<K,V> entry) {
+    long startTime = 0;
+    if ( keepStatistics ) {
+      startTime = System.nanoTime();
+    }
+    doComplete(entry);
+    if ( keepStatistics ) {
+      completionTimeMetric.addTransaction(startTime, System.nanoTime());
+    }
+  }
+
+  /**
+   * Complete a store operation in the store queue, then remove
+   * the key and value from the map and return the entry to
+   * the free queue.
+   * 
+   * @param entry the store queue entry.
+   */
+  public abstract void doComplete(StoreQueueEntry<K,V> entry);
+
+  /**
+   * If the store queue is full, immediately perform the write
+   * (caller runs); otherwise, add an entry to the store queue
+   * and insert the key and value into the map.
+   * 
+   * @param key the primary key for the cache data.
+   * @param value the data to be stored in the cache.
+   * @param expires the time when the data expires (Java epoch).
+   */
+  @Override
+  public void store(K key, V value, long expires) {
+    long startTime = 0;
+    if ( keepStatistics ) {
+      startTime = System.nanoTime();
+    }
+    doStore(key, value, expires);
+    if ( keepStatistics ) {
+      requestTimeMetric.addTransaction(startTime, System.nanoTime());
+    }
+  }
+
+  /**
+   * If the store queue is full, immediately perform the write
+   * (caller runs); otherwise, add an entry to the store queue
+   * and insert the key and value into the map.
+   * 
+   * @param key the primary key for the cache data.
+   * @param value the data to be stored in the cache.
+   * @param expires the time when the data expires (Java epoch).
+   */
+  public abstract void doStore(K key, V value, long expires);
+
+  private boolean keepStatistics = true;
   protected AtomicLong storeCount;
   protected AtomicLong queueCount;
   protected CacheAdapter<K, V> adapter;
+  private TimeMetric completionTimeMetric;
+  private TimeMetric requestTimeMetric;
 }

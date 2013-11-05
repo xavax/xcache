@@ -3,5 +3,5 @@ common.home= /common
 javac.debug=true
 javac.debuglevel=lines,vars,source
 
-xcache.version=0.0.0
+xcache.rev=0.0.0
 built.by=nobody

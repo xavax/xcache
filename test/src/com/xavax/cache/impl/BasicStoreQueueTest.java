@@ -20,9 +20,9 @@ public class BasicStoreQueueTest extends XCacheTestCase {
   private static final int MIN_THREADS = 4;
   private static final int MAX_THREADS = 8;
   public static final int WORKER_THREAD_COUNT = 16;
-  public static final int DATA_SET_SIZE = 256 * 1024 * WORKER_THREAD_COUNT;
-  public static final int WORKER_DELAY_TIME = 1;
-  public static final int WRITER_DELAY_TIME = 10;
+  public static final int DATA_SET_SIZE = 64 * 1024 * WORKER_THREAD_COUNT;
+  public static final int WORKER_DELAY_TIME = 0;
+  public static final int WRITER_DELAY_TIME = 0;
 
   @BeforeMethod
   public void setup() throws Exception {
@@ -60,11 +60,15 @@ public class BasicStoreQueueTest extends XCacheTestCase {
     long storeCount = storeQueue.getStoreCount();
     long queueCount = storeQueue.getQueueCount();
     double eff = ((double) queueCount / (double) storeCount) * 100;
+    TimeMetric.Result requestMetrics = storeQueue.getRequestMetrics();
+    TimeMetric.Result completionMetrics = storeQueue.getCompletionMetrics();
     System.out.println("elapsed time: " + elapsed +
 	"\naverage time: " + average +
 	"\nstore count: " + storeCount +
 	"\nqueue count: " + queueCount +
-	"\neffectiveness: " + eff + "%");
+	"\neffectiveness: " + eff + "%" +
+	"\nrequest: " + requestMetrics.toString() +
+	"\ncompletion: " + completionMetrics.toString());
   }
 
   private BasicStoreQueue<Integer, Integer> storeQueue;

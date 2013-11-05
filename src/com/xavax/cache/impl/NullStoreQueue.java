@@ -26,18 +26,18 @@ public class NullStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @param expires  the time when the data expires (Java epoch).
    */
   @Override
-  public void store(K key, V value, long expires) {
+  public void doStore(K key, V value, long expires) {
     adapter.store(key, value, expires);
   }
 
   /**
-   * Execute an entry in the store queue, then remove the
-   * key and value from the map and return the entry to
+   * Complete a store operation in the store queue, then remove
+   * the key and value from the map and return the entry to
    * the free queue.
    * 
    * @param entry the store queue entry.
    */
-  public void execute(StoreQueueEntry<K,V> entry) {    
+  public void doComplete(StoreQueueEntry<K,V> entry) {    
   }
 
   /**

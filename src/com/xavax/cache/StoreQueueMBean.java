@@ -5,6 +5,8 @@
 //
 package com.xavax.cache;
 
+import com.xavax.cache.impl.TimeMetric;
+
 /**
  * StoreQueueMBean provides the interface for monitoring and
  * managing a store queue.
@@ -26,6 +28,20 @@ public interface StoreQueueMBean {
    * @return the number of store requests.
    */
   public long getStoreCount();
+
+  /**
+   * Returns the metrics for store operations.
+   *
+   * @return the metrics for store operations.
+   */
+  public TimeMetric.Result getCompletionMetrics();
+
+  /**
+   * Returns the metrics for store requests.
+   *
+   * @return the metrics for store requests.
+   */
+  public TimeMetric.Result getRequestMetrics();
 
   /**
    * Reset the counters.

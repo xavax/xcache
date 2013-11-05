@@ -7,19 +7,19 @@ package com.xavax.cache.test;
 
 /**
  * XCacheTestCase is a base class for XCache test cases.
- *
+ * 
  * @author alvitar@xavax.com
  */
 public class XCacheTestCase {
 
   /**
    * Sleep the specified number of milliseconds.
-   *
-   * @param interval  the amount of time in milliseconds to sleep.
+   * 
+   * @param interval the amount of time in milliseconds to sleep.
    */
   public static void sleep(long interval) {
     try {
-      Thread.currentThread().wait(interval);
+      Thread.sleep(interval);
     }
     catch (Exception e) {
       // Ignore this exception.

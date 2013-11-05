@@ -5,49 +5,51 @@ http://www.xavax.com/xosl.html
 -->
 
 <project name="xcache" default="jar" basedir=".">
-  <!-- Configure the context path for this application -->
-  <property name="project" value="xcache" />
-  <property file="local.properties" />
-  <property file="build.properties" />
+	<!-- Configure the context path for this application -->
+	<property name="project" value="xcache" />
+	<property file="local.properties" />
+	<property file="build.properties" />
 
-  <!-- Create the class path -->
-  <path id="classpath.xcache">
-    <pathelement location="${log4j.jar}" />
-    <pathelement location="${commons.lang.jar}" />
-    <pathelement location="${xcore.jar}" />
-  </path>
+	<!-- Create the class path -->
+	<path id="classpath.xcache">
+		<pathelement location="${log4j.jar}" />
+		<pathelement location="${commons.lang.jar}" />
+		<pathelement location="${xcore.jar}" />
+	</path>
 
-  <!-- Executable Targets -->
+	<!-- Executable Targets -->
 
-  <target name="init" >
-    <tstamp/>
-  </target>
- 
-  <target name="build" depends="init">
-    <mkdir dir="build" />
-    <javac debug="${javac.debug}"
-	   includeantruntime="false"
-	   srcdir="src" destdir="build">
-      <classpath refid="classpath.xcache"/>
-      <include name="**/*.java" />
-    </javac>
-  </target>
+	<target name="init">
+		<tstamp />
+	</target>
 
-  <target name="jar" depends="build">
-    <echo message="Creating xcache.jar"/>
-    <jar destfile="xcache.jar" filesonly="true" >
-      <fileset dir="build" includes="**/*.class" />
-      <manifest>
-        <attribute name="Built-By" value="${built.by}" />
-        <attribute name="Built-On" value="${timestamp.isoformat}" />
-        <attribute name="Implementation-Version"  value="${xcache.version}" />
-      </manifest>
-    </jar>
-  </target>
+	<target name="build" depends="init">
+		<mkdir dir="build" />
+		<javac debug="${javac.debug}" includeantruntime="false" srcdir="src" destdir="build">
+			<classpath refid="classpath.xcache" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
 
-  <target name="clean" >
-    <delete dir="build" />
-    <delete dir="test/build" />
-  </target>
+	<target name="jar" depends="build">
+		<echo message="Creating xcache.jar" />
+		<jar destfile="xcache.jar" filesonly="true">
+			<fileset dir="build" includes="**/*.class" />
+			<manifest>
+				<attribute name="Built-By" value="${built.by}" />
+				<attribute name="Built-On" value="${timestamp.isoformat}" />
+				<attribute name="Implementation-Version" value="${xcache.rev}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="install-jar" depends="jar">
+		<copy file="xcache.jar" todir="${xcache.home}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="test/build" />
+	</target>
 
 </project>
