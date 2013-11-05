@@ -13,6 +13,7 @@ import static org.testng.Assert.*;
 
 public class BasicStoreQueueBuilderTest {
 
+  private final static boolean ENABLE_METRICS = true;
   private final static int KEEP_ALIVE_TIME = 600;
   private final static int MIN_THREADS = 8;
   private final static int MAX_THREADS = 16;
@@ -32,7 +33,9 @@ public class BasicStoreQueueBuilderTest {
     	.withMinimumThreads(MIN_THREADS)
     	.withMaximumThreads(MAX_THREADS)
     	.withMaximumQueueSize(MAX_QUEUE_SIZE)
-    	.withLoadFactor(LOAD_FACTOR);
+    	.withLoadFactor(LOAD_FACTOR)
+    	.withMetrics(ENABLE_METRICS);
+    assertEquals(builder.enableMetrics, ENABLE_METRICS);
     assertEquals(builder.keepAliveTime, KEEP_ALIVE_TIME);
     assertEquals(builder.minThreads, MIN_THREADS);
     assertEquals(builder.maxThreads, MAX_THREADS);

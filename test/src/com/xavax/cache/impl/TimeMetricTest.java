@@ -8,6 +8,7 @@ import static org.testng.Assert.*;
 public class TimeMetricTest {
   private final static long START_TIME = 1000;
   private final static long STOP_TIME = 1100;
+  private final static long SCALE_FACTOR = 100;
 
   private TimeMetric metric;
 
@@ -45,5 +46,13 @@ public class TimeMetricTest {
     metric.addTransaction(START_TIME, STOP_TIME + 4);
     result = metric.result();
     assertEquals(result.toString(), "(5, 100, 104, 102.0, 1.4142135623730951)");
+  }
+
+  @Test
+  public void testScaleFactor() {
+    metric = new TimeMetric(SCALE_FACTOR);
+    metric.addTransaction(START_TIME, STOP_TIME);
+    TimeMetric.Result result = metric.result();
+    assertEquals(result.min(), 1);
   }
 }

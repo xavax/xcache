@@ -26,18 +26,18 @@ public class TimeMetric {
      * @param timeMetric  the TimeMetric object to be examined.
      */
     public Result(TimeMetric timeMetric) {
-      min = timeMetric.min;
-      max = timeMetric.max;
-      count = timeMetric.count.get();
-      totalTime = timeMetric.totalTime.get();
-      totalTimeSquared = timeMetric.totalTimeSquared.get();
+      this.min = timeMetric.min;
+      this.max = timeMetric.max;
+      this.count = timeMetric.count.get();
+      this.totalTime = timeMetric.totalTime.get();
+      this.totalTimeSquared = timeMetric.totalTimeSquared.get();
       if ( count > 0 ) {
-	mean = (double) totalTime / (double) count;
-	deviation = Math.sqrt((double) totalTimeSquared/count - (mean * mean));
+	this.mean = (double) totalTime / (double) count;
+	this.deviation = Math.sqrt((double) totalTimeSquared/count - (mean * mean));
       }
       else {
-	mean = 0;
-	deviation = 0;
+	this.mean = 0;
+	this.deviation = 0;
       }
     }
 
@@ -74,7 +74,7 @@ public class TimeMetric {
      * @return the minimum transaction time.
      */
     public long min() {
-      return this.min();
+      return this.min;
     }
 
     /**
@@ -83,7 +83,7 @@ public class TimeMetric {
      * @return the maximum transaction time.
      */
     public long max() {
-      return this.max();
+      return this.max;
     }
 
     /**
@@ -114,6 +114,8 @@ public class TimeMetric {
     }
 
     private long count;
+    private long min;
+    private long max;
     private long totalTime;
     private long totalTimeSquared;
     private double mean;

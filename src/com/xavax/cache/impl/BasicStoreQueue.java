@@ -56,6 +56,7 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    */
   @Override
   public void configure(StoreQueueBuilder<K,V> builder) {
+    super.configure(builder);
     if ( builder instanceof BasicStoreQueueBuilder ) {
       BasicStoreQueueBuilder<K,V> bsqb = (BasicStoreQueueBuilder<K,V>) builder;
       this.keepAliveTime = bsqb.keepAliveTime;

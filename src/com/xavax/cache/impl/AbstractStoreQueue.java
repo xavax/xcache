@@ -13,6 +13,7 @@ import com.xavax.cache.StoreQueue;
 import com.xavax.cache.StoreQueueEntry;
 import com.xavax.cache.StoreQueueMBean;
 import com.xavax.cache.builder.StoreQueueBuilder;
+import com.xavax.cache.builder.impl.AbstractStoreQueueBuilder;
 
 /**
  * AbstractStoreQueue is the base class for all store queues.
@@ -36,8 +37,13 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    *
    * @param builder  the store queue builder containing configuration data.
    */
+
   @Override
   public void configure(StoreQueueBuilder<K,V> builder) {
+    if ( builder instanceof AbstractStoreQueueBuilder ) {
+      AbstractStoreQueueBuilder<K,V> asqb = (AbstractStoreQueueBuilder<K,V>) builder;
+      this.enableMetrics = asqb.enableMetrics;
+    }
   }
 
   /**
@@ -56,9 +62,9 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
   public void start(){
     queueCount = new AtomicLong();
     storeCount = new AtomicLong();
-    if ( keepStatistics ) {
-      completionTimeMetric = new TimeMetric(100);
-      requestTimeMetric = new TimeMetric(100);
+    if ( enableMetrics ) {
+      completionTimeMetric = new TimeMetric(SCALE_FACTOR);
+      requestTimeMetric = new TimeMetric(SCALE_FACTOR);
     }
   }
 
@@ -94,7 +100,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    * @return the metrics for store operations.
    */
   public TimeMetric.Result getCompletionMetrics() {
-    return keepStatistics ? completionTimeMetric.result() : null;
+    return enableMetrics ? completionTimeMetric.result() : null;
   }
 
   /**
@@ -103,7 +109,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    * @return the metrics for store requests.
    */
   public TimeMetric.Result getRequestMetrics() {
-    return keepStatistics ? requestTimeMetric.result() : null;
+    return enableMetrics ? requestTimeMetric.result() : null;
   }
 
   /**
@@ -115,11 +121,11 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    */
   public void complete(StoreQueueEntry<K,V> entry) {
     long startTime = 0;
-    if ( keepStatistics ) {
+    if ( enableMetrics ) {
       startTime = System.nanoTime();
     }
     doComplete(entry);
-    if ( keepStatistics ) {
+    if ( enableMetrics ) {
       completionTimeMetric.addTransaction(startTime, System.nanoTime());
     }
   }
@@ -145,11 +151,11 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
   @Override
   public void store(K key, V value, long expires) {
     long startTime = 0;
-    if ( keepStatistics ) {
+    if ( enableMetrics ) {
       startTime = System.nanoTime();
     }
     doStore(key, value, expires);
-    if ( keepStatistics ) {
+    if ( enableMetrics ) {
       requestTimeMetric.addTransaction(startTime, System.nanoTime());
     }
   }
@@ -165,7 +171,9 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    */
   public abstract void doStore(K key, V value, long expires);
 
-  private boolean keepStatistics = true;
+  private final static long SCALE_FACTOR = 100;
+
+  private boolean enableMetrics = true;
   protected AtomicLong storeCount;
   protected AtomicLong queueCount;
   protected CacheAdapter<K, V> adapter;

@@ -5,8 +5,10 @@ import com.xavax.cache.StoreQueue;
 import com.xavax.cache.builder.CacheBuilderException;
 import com.xavax.cache.builder.StoreQueueBuilder;
 
-public abstract class AbstractStoreQueueBuilder<K, V>
-	extends XObject implements StoreQueueBuilder<K, V> {
+public abstract class AbstractStoreQueueBuilder<K, V> extends XObject
+	implements StoreQueueBuilder<K, V> {
+
+  public final static boolean DEFAULT_ENABLE_METRICS = false;
 
   /**
    * Build a store queue.
@@ -43,5 +45,17 @@ public abstract class AbstractStoreQueueBuilder<K, V>
     this.storeQueueClass = storeQueueClass;
   }
 
+  /**
+   * Enable gathering performance metrics for this store queue.
+   *
+   * @param enableMetrics  true if performance metrics should be gathered.
+   * @return this builder.
+   */
+  public AbstractStoreQueueBuilder<K, V> withMetrics(boolean enableMetrics) {
+    this.enableMetrics = enableMetrics;
+    return this;
+  }
+
+  public boolean enableMetrics = DEFAULT_ENABLE_METRICS;
   protected Class<? extends StoreQueue<K,V>> storeQueueClass;
 }

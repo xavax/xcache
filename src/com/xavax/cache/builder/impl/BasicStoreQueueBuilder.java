@@ -54,6 +54,15 @@ public class BasicStoreQueueBuilder<K,V> extends AbstractStoreQueueBuilder<K, V>
     return this;
   }
 
+  /**
+   * Enable gathering performance metrics for this store queue.
+   *
+   * @param enableMetrics  true if performance metrics should be gathered.
+   * @return this builder.
+   */
+  public BasicStoreQueueBuilder<K, V> withMetrics(boolean enableMetrics) {
+    return (BasicStoreQueueBuilder<K, V>) super.withMetrics(enableMetrics);
+  }
 
   /**
    * Sets the keep alive time in seconds for worker threads.

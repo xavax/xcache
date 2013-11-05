@@ -30,6 +30,7 @@ public class BasicStoreQueueTest extends XCacheTestCase {
     BasicStoreQueueBuilder<Integer,Integer> builder =
 	new BasicStoreQueueBuilder<Integer, Integer>();
     storeQueue = builder
+	.withMetrics(true)
 	.withMinimumThreads(MIN_THREADS)
 	.withMaximumThreads(MAX_THREADS)
     	.withMaximumQueueSize(QUEUE_SIZE).build();
