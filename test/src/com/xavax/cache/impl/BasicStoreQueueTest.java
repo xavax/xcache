@@ -63,13 +63,17 @@ public class BasicStoreQueueTest extends XCacheTestCase {
     double eff = ((double) queueCount / (double) storeCount) * 100;
     TimeMetric.Result requestMetrics = storeQueue.getRequestMetrics();
     TimeMetric.Result completionMetrics = storeQueue.getCompletionMetrics();
+    TimeMetric.Result freePoolAllocate = storeQueue.freePoolAllocateTimeMetric.result();
+    TimeMetric.Result freePoolRelease = storeQueue.freePoolReleaseTimeMetric.result();
     System.out.println("elapsed time: " + elapsed +
 	"\naverage time: " + average +
 	"\nstore count: " + storeCount +
 	"\nqueue count: " + queueCount +
 	"\neffectiveness: " + eff + "%" +
-	"\nrequest: " + requestMetrics.toString() +
-	"\ncompletion: " + completionMetrics.toString());
+	"\nrequest: " + requestMetrics +
+	"\ncompletion: " + completionMetrics +
+	"\nallocate: " + freePoolAllocate +
+	"\nrelease: " + freePoolRelease);
   }
 
   private BasicStoreQueue<Integer, Integer> storeQueue;

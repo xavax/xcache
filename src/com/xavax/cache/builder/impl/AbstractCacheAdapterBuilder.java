@@ -20,9 +20,6 @@ import com.xavax.cache.builder.StoreQueueBuilder;
  * @param <V>  the value class.
  */
 public abstract class AbstractCacheAdapterBuilder<K, V> implements CacheAdapterBuilder<K,V> {
-  protected String name;
-  protected StoreQueueBuilder<K,V> storeQueueBuilder;
-  protected Class<? extends CacheAdapter<K,V>> adapterClass;
 
   /**
    * Construct an AbstractCacheAdapterBuilder
@@ -98,4 +95,35 @@ public abstract class AbstractCacheAdapterBuilder<K, V> implements CacheAdapterB
     this.name = name;
     return this;
   }
+
+  /**
+   * Return the name of this cache adapter.
+   *
+   * @return the name of this cache adapter.
+   */
+  public String name() {
+    return this.name;
+  }
+
+  /**
+   * Return the store queue builder.
+   *
+   * @return the store queue builder.
+   */
+  public StoreQueueBuilder<K,V> storeQueueBuilder() {
+    return this.storeQueueBuilder;
+  }
+
+  /**
+   * Return the class of this cache adapter.
+   *
+   * @return the class of this cache adapter.
+   */
+  public Class<? extends CacheAdapter<K,V>> adapterClass() {
+    return this.adapterClass;
+  }
+
+  private String name;
+  protected StoreQueueBuilder<K,V> storeQueueBuilder;
+  protected Class<? extends CacheAdapter<K,V>> adapterClass;
 }

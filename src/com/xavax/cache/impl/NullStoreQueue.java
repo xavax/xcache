@@ -6,6 +6,7 @@
 package com.xavax.cache.impl;
 
 import com.xavax.cache.StoreQueueEntry;
+import com.xavax.cache.builder.impl.NullStoreQueueBuilder;
 
 /**
  * NullStoreQueue does not implement asynchronous writes to the cache
@@ -52,4 +53,14 @@ public class NullStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
     return null;
   }
 
+  /**
+   * Return the default builder for this store queue class.
+   * 
+   * @return the default builder for this store queue class.
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  protected NullStoreQueueBuilder<K, V> exemplar() {
+    return (NullStoreQueueBuilder<K, V>) NullStoreQueueBuilder.EXEMPLAR;
+  }
 }

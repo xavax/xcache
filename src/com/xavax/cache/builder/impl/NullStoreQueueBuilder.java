@@ -19,6 +19,9 @@ import com.xavax.cache.impl.NullStoreQueue;
  */
 public class NullStoreQueueBuilder<K,V> extends AbstractStoreQueueBuilder<K, V> {
 
+  @SuppressWarnings("rawtypes")
+  public final static NullStoreQueueBuilder EXEMPLAR = new NullStoreQueueBuilder();
+
   /**
    * Build a store queue.
    *

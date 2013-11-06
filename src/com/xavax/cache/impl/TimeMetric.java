@@ -144,7 +144,8 @@ public class TimeMetric {
   }
 
   /**
-   * Add a transaction to this metric.
+   * Add a transaction to this metric with the specified start
+   * and stop times.
    *
    * @param start  the start time.
    * @param stop   the stop time.
@@ -163,6 +164,24 @@ public class TimeMetric {
     count.incrementAndGet();
     totalTime.addAndGet(elapsed);
     totalTimeSquared.addAndGet(elapsed * elapsed);
+  }
+
+  /**
+   * Add a transaction to this metric with the specified start
+   * time. The stop time is determined by calling System.nanoTime.
+   *
+   * @param start  the start time.
+   */
+  public void addTransaction(long start) {
+    addTransaction(start, currentTime());
+  }
+
+  /**
+   * Returns the time in nanoseconds as produced by System.nanoTime.
+   * Override this method to use a different time base.
+   */
+  public long currentTime() {
+    return System.nanoTime();
   }
 
   /**

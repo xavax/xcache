@@ -25,9 +25,7 @@ public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
   /**
    * Construct a LocalBoundedCacheAdapter.
    */
-  @SuppressWarnings("unchecked")
   public LocalBoundedCacheAdapter() {
-    this.configure(LocalBoundedCacheAdapterBuilder.exemplar());
   }
 
   /**
@@ -117,9 +115,20 @@ public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
    */
   @Override
   public void start() {
+    if ( !configured ) {
+      this.configure(exemplar());
+    }
     assert(initialCapacity > 0 && maximumCapacity >= initialCapacity && loadFactor > 0);
     super.start();
     map = new BoundedCacheMap<K,CacheMapEntry<K,V>>(initialCapacity, loadFactor, maximumCapacity);
+  }
+
+  /**
+   * Return the exemplar for this class.
+   */
+  @SuppressWarnings("unchecked")
+  public LocalBoundedCacheAdapterBuilder<K,V> exemplar() {
+    return (LocalBoundedCacheAdapterBuilder<K,V>) LocalBoundedCacheAdapterBuilder.EXEMPLAR;
   }
 
   private int initialCapacity;

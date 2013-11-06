@@ -43,14 +43,6 @@ public class LocalBoundedCacheAdapterBuilder<K,V> extends AbstractCacheAdapterBu
   }
 
   /**
-   * Return the exemplar for this class.
-   */
-  @SuppressWarnings("rawtypes")
-  public static LocalBoundedCacheAdapterBuilder exemplar() {
-    return EXEMPLAR;
-  }
-
-  /**
    * Build a cache adapter.
    *
    * @return a configured cache adapter.

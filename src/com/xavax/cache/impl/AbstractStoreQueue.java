@@ -40,6 +40,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
 
   @Override
   public void configure(StoreQueueBuilder<K,V> builder) {
+    configured = true;
     if ( builder instanceof AbstractStoreQueueBuilder ) {
       AbstractStoreQueueBuilder<K,V> asqb = (AbstractStoreQueueBuilder<K,V>) builder;
       this.enableMetrics = asqb.enableMetrics;
@@ -126,7 +127,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
     }
     doComplete(entry);
     if ( enableMetrics ) {
-      completionTimeMetric.addTransaction(startTime, System.nanoTime());
+      completionTimeMetric.addTransaction(startTime);
     }
   }
 
@@ -156,7 +157,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
     }
     doStore(key, value, expires);
     if ( enableMetrics ) {
-      requestTimeMetric.addTransaction(startTime, System.nanoTime());
+      requestTimeMetric.addTransaction(startTime);
     }
   }
 
@@ -171,8 +172,16 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    */
   public abstract void doStore(K key, V value, long expires);
 
+  /**
+   * Return the default builder for this store queue class.
+   *
+   * @return the default builder for this store queue class.
+   */
+  protected abstract AbstractStoreQueueBuilder<K,V> exemplar();
+
   private final static long SCALE_FACTOR = 100;
 
+  protected boolean configured = false;
   private boolean enableMetrics = true;
   protected AtomicLong storeCount;
   protected AtomicLong queueCount;

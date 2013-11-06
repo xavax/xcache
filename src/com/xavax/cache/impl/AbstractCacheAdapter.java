@@ -12,6 +12,8 @@ import com.xavax.cache.CacheAdapterMBean;
 import com.xavax.cache.CacheContext;
 import com.xavax.cache.StoreQueue;
 import com.xavax.cache.StoreQueueEntry;
+import com.xavax.cache.builder.CacheAdapterBuilder;
+import com.xavax.cache.builder.impl.AbstractCacheAdapterBuilder;
 
 public abstract class AbstractCacheAdapter<K, V>
 	implements CacheAdapter<K,V>, CacheAdapterMBean {
@@ -236,6 +238,26 @@ public abstract class AbstractCacheAdapter<K, V>
     }
   }
 
+  /**
+   * Configure this cache adapter with values from the specified builder.
+   *
+   * @param builder  the builder containing configuration data.
+   */
+  @Override
+  public void configure(CacheAdapterBuilder<K,V> builder) {
+    if ( builder instanceof AbstractCacheAdapterBuilder ) {
+      this.name = ((AbstractCacheAdapterBuilder<K,V>) builder).name();
+    }
+  }
+
+  /**
+   * Return the exemplar for this class.
+   */
+  public AbstractCacheAdapterBuilder<K,V> exemplar() {
+    return null;
+  }
+
+  protected boolean configured = false;
   private boolean countExpiredAsMissed;
   private int level;
   private String name;

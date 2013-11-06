@@ -26,6 +26,9 @@ public class BasicStoreQueueBuilder<K,V> extends AbstractStoreQueueBuilder<K, V>
   public final static float DEFAULT_LOAD_FACTOR = (float) 0.75;
 
   @SuppressWarnings("rawtypes")
+  public final static BasicStoreQueueBuilder EXEMPLAR = new BasicStoreQueueBuilder();
+
+  @SuppressWarnings("rawtypes")
   private final static Class<? extends StoreQueue> DEFAULT_STORE_QUEUE_CLASS =
       (Class<? extends StoreQueue>) BasicStoreQueue.class;
 
