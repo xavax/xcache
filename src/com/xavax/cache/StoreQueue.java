@@ -34,7 +34,7 @@ public interface StoreQueue<K,V> {
    * @param key  the primary key of the cache entry.
    * @return the data matching the specified key.
    */
-  public StoreQueueEntry<K,V> get(K key);
+  public StoreQueueEntry<K, V> get(K key);
 
   /**
    * Complete the store operation. Called when a worker thread is available.

@@ -49,7 +49,7 @@ public class NullStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @return the data matching the specified key.
    */
   @Override
-  public StoreQueueEntry<K,V> get(K key) {
+  public StoreQueueEntry<K, V> get(K key) {
     return null;
   }
 

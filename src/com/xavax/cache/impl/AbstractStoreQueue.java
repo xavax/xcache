@@ -180,7 +180,7 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    */
   protected abstract AbstractStoreQueueBuilder<K,V> exemplar();
 
-  protected final static long SCALE_FACTOR = 1000;
+  protected final static long SCALE_FACTOR = TimeMetric.SCALE_BY_MICROSECONDS;
 
   protected boolean configured = false;
   protected boolean enableMetrics = true;

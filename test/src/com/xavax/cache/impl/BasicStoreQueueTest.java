@@ -19,9 +19,9 @@ import static org.testng.Assert.*;
 public class BasicStoreQueueTest extends XCacheTestCase {
   private static final int QUEUE_SIZE = 1024;
   private static final int MIN_THREADS = 4;
-  private static final int MAX_THREADS = 8;
+  private static final int MAX_THREADS = 16;
   public static final int WORKER_THREAD_COUNT = 16;
-  public static final int DATA_SET_SIZE = 64 * 1024 * WORKER_THREAD_COUNT;
+  public static final int DATA_SET_SIZE = 256 * 1024 * WORKER_THREAD_COUNT;
   public static final int WORKER_DELAY_TIME = 0;
   public static final int WRITER_DELAY_TIME = 0;
 
@@ -55,7 +55,7 @@ public class BasicStoreQueueTest extends XCacheTestCase {
     long time1 = System.currentTimeMillis();
     for ( int i = 0; i < DATA_SET_SIZE; ++i ) {
       Integer key = new Integer(i);
-      assertEquals(key, dataMap[i]);
+      assertEquals(dataMap[i], key);
     }
     long elapsed = time1 - time0;
     double average = ((double) elapsed) / ((double) DATA_SET_SIZE);

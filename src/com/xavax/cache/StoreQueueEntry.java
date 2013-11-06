@@ -9,7 +9,7 @@ package com.xavax.cache;
  * StoreQueueEntry encapsulates an entry in the cache store queue and contains
  * all information necessary to complete the cache write transaction.
  */
-public class StoreQueueEntry<K,V> implements Runnable {
+public class StoreQueueEntry<K,V> implements Runnable, Positional {
   /**
    * Construct a StoreQueueEntry for the specified store queue.
    */
@@ -88,6 +88,23 @@ public class StoreQueueEntry<K,V> implements Runnable {
     storeQueue.complete(this);
   }
 
+  /* (non-Javadoc)
+   * @see com.xavax.cache.HasSlotNumber#slot(int)
+   */
+  @Override
+  public void position(int slot) {
+    this.slot = slot;
+  }
+
+  /* (non-Javadoc)
+   * @see com.xavax.cache.HasSlotNumber#slot()
+   */
+  @Override
+  public int position() {
+    return this.slot;
+  }
+
+  private int slot;
   private long expires;
   private K key;
   private V value;

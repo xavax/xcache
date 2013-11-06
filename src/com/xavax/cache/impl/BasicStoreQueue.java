@@ -72,7 +72,7 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @return the metrics for free pool allocations.
    */
   public TimeMetric.Result getFreePoolAllocationMetrics() {
-    return enableMetrics ? freePoolAllocateTimeMetric.result() : null;
+    return freePool.getAllocationMetrics();
   }
 
   /**
@@ -81,7 +81,7 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    * @return the metrics for free pool releases.
    */
   public TimeMetric.Result getFreePoolReleaseMetrics() {
-    return enableMetrics ? freePoolReleaseTimeMetric.result() : null;
+    return freePool.getReleaseMetrics();
   }
 
   /**
@@ -98,22 +98,26 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
     if (maxThreads < minThreads) {
       maxThreads = minThreads;
     }
-    if ( enableMetrics) {
-      freePoolAllocateTimeMetric = new TimeMetric(SCALE_FACTOR);
-      freePoolReleaseTimeMetric = new TimeMetric(SCALE_FACTOR);
-    }
-    freeQueueSize = maxQueueSize + (FREE_QUEUE_MULTIPLIER * maxThreads);
     busyQueue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
-    freeQueue = new LinkedBlockingQueue<StoreQueueEntry<K, V>>(freeQueueSize);
-    for ( int i = 0; i < freeQueueSize; ++i ) {
-      freeQueue.add(new StoreQueueEntry<K, V>(this));
-    }
+    freePool = new ConcurrentPool<StoreQueueEntry<K, V>>(maxQueueSize, true) {
+      protected StoreQueueEntry<K, V> createResource() {
+	return new StoreQueueEntry<K, V>(BasicStoreQueue.this);
+      }
+    };
     map = new ConcurrentHashMap<K, StoreQueueEntry<K, V>>(maxQueueSize
 							  * MAP_MULTIPLIER,
 	loadFactor, maxThreads);
     executor = new ThreadPoolExecutor(minThreads, maxThreads,
 	keepAliveTime, TimeUnit.SECONDS, busyQueue,
 	new ThreadPoolExecutor.CallerRunsPolicy());
+  }
+
+  public StoreQueueEntry<K, V> allocate() {
+    return freePool.allocate();
+  }
+
+  public void release(StoreQueueEntry<K, V> entry) {
+    freePool.release(entry);
   }
 
   /**
@@ -127,18 +131,11 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
    */
   @Override
   public void doStore(K key, V value, long expires) {
-    long startTime = 0;
-    if ( enableMetrics ) {
-      startTime = freePoolAllocateTimeMetric.currentTime();
-    }
-    StoreQueueEntry<K, V> entry = this.freeQueue.poll();
+    StoreQueueEntry<K, V> entry = allocate();
     if (entry == null) {
       adapter.store(key, value, expires);
     }
     else {
-      if ( enableMetrics ) {
-	freePoolAllocateTimeMetric.addTransaction(startTime);
-      }
       entry.init(key, value, expires);
       map.put(key, entry);
       executor.execute(entry);
@@ -158,14 +155,7 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
     adapter.store(key, entry.value(), entry.expires());
     map.remove(key, entry);
     entry.clear();
-    long startTime = 0;
-    if ( enableMetrics ) {
-      startTime = freePoolReleaseTimeMetric.currentTime();
-    }
-    freeQueue.add(entry);
-    if ( enableMetrics ) {
-      freePoolReleaseTimeMetric.addTransaction(startTime);
-    }
+    release(entry);
   }
 
   /**
@@ -191,19 +181,15 @@ public class BasicStoreQueue<K, V> extends AbstractStoreQueue<K, V> {
     return (BasicStoreQueueBuilder<K, V>) BasicStoreQueueBuilder.EXEMPLAR;
   }
 
-  private final static int FREE_QUEUE_MULTIPLIER = 2;
   private final static int MAP_MULTIPLIER = 2;
 
   private int minThreads;
   private int maxThreads;
   private int maxQueueSize;
-  private int freeQueueSize;
   private int keepAliveTime;
   private float loadFactor;
   private BlockingQueue<Runnable> busyQueue;
-  private BlockingQueue<StoreQueueEntry<K, V>> freeQueue;
+  private ConcurrentPool<StoreQueueEntry<K, V>> freePool;
   private ConcurrentMap<K, StoreQueueEntry<K, V>> map;
   private ThreadPoolExecutor executor;
-  private TimeMetric freePoolAllocateTimeMetric;
-  private TimeMetric freePoolReleaseTimeMetric;
 }
