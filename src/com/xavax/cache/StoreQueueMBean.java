@@ -5,7 +5,7 @@
 //
 package com.xavax.cache;
 
-import com.xavax.cache.impl.TimeMetric;
+import com.xavax.metrics.TimeMetric;
 
 /**
  * StoreQueueMBean provides the interface for monitoring and

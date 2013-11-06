@@ -12,6 +12,7 @@ import com.xavax.cache.CacheContext;
 import com.xavax.cache.builder.CacheAdapterBuilder;
 import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
 import com.xavax.cache.test.XCacheTestCase;
+import com.xavax.metrics.TimeMetric;
 
 import static org.testng.Assert.*;
 
@@ -63,8 +64,8 @@ public class BasicStoreQueueTest extends XCacheTestCase {
     double eff = ((double) queueCount / (double) storeCount) * 100;
     TimeMetric.Result requestMetrics = storeQueue.getRequestMetrics();
     TimeMetric.Result completionMetrics = storeQueue.getCompletionMetrics();
-    TimeMetric.Result freePoolAllocate = storeQueue.freePoolAllocateTimeMetric.result();
-    TimeMetric.Result freePoolRelease = storeQueue.freePoolReleaseTimeMetric.result();
+    TimeMetric.Result freePoolAllocate = storeQueue.getFreePoolAllocationMetrics();
+    TimeMetric.Result freePoolRelease = storeQueue.getFreePoolReleaseMetrics();
     System.out.println("elapsed time: " + elapsed +
 	"\naverage time: " + average +
 	"\nstore count: " + storeCount +

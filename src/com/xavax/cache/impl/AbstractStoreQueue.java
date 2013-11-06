@@ -14,6 +14,7 @@ import com.xavax.cache.StoreQueueEntry;
 import com.xavax.cache.StoreQueueMBean;
 import com.xavax.cache.builder.StoreQueueBuilder;
 import com.xavax.cache.builder.impl.AbstractStoreQueueBuilder;
+import com.xavax.metrics.TimeMetric;
 
 /**
  * AbstractStoreQueue is the base class for all store queues.
@@ -179,10 +180,10 @@ public abstract class AbstractStoreQueue<K, V> extends XObject
    */
   protected abstract AbstractStoreQueueBuilder<K,V> exemplar();
 
-  private final static long SCALE_FACTOR = 100;
+  protected final static long SCALE_FACTOR = 1000;
 
   protected boolean configured = false;
-  private boolean enableMetrics = true;
+  protected boolean enableMetrics = true;
   protected AtomicLong storeCount;
   protected AtomicLong queueCount;
   protected CacheAdapter<K, V> adapter;
