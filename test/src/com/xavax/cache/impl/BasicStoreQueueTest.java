@@ -11,12 +11,12 @@ import org.testng.annotations.Test;
 import com.xavax.cache.CacheContext;
 import com.xavax.cache.builder.CacheAdapterBuilder;
 import com.xavax.cache.builder.impl.BasicStoreQueueBuilder;
-import com.xavax.cache.test.XCacheTestCase;
 import com.xavax.metrics.TimeMetric;
+import com.xavax.test.XTestUtils;
 
 import static org.testng.Assert.*;
 
-public class BasicStoreQueueTest extends XCacheTestCase {
+public class BasicStoreQueueTest {
   private static final int QUEUE_SIZE = 1024;
   private static final int MIN_THREADS = 4;
   private static final int MAX_THREADS = 16;
@@ -97,7 +97,7 @@ public class BasicStoreQueueTest extends XCacheTestCase {
 
     @Override
     public void store(K key, V value, long expires) {
-      BasicStoreQueueTest.sleep(WORKER_DELAY_TIME);
+      XTestUtils.sleep(WORKER_DELAY_TIME);
       Integer i = ((Integer) key);
       int index = i.intValue();
       dataMap[index] = i;
@@ -119,7 +119,7 @@ public class BasicStoreQueueTest extends XCacheTestCase {
       for ( int i = offset; i < DATA_SET_SIZE; i += stride ) {
 	Integer key = new Integer(i);
 	adapter.put(null, key, key, 0);
-	BasicStoreQueueTest.sleep(WORKER_DELAY_TIME);
+	XTestUtils.sleep(WORKER_DELAY_TIME);
       }
     }
 

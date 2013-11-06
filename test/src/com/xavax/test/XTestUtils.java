@@ -3,14 +3,14 @@
 // Use of this software is allowed under the Xavax Open Software License.
 // http://www.xavax.com/xosl.html
 //
-package com.xavax.cache.test;
+package com.xavax.test;
 
 /**
  * XCacheTestCase is a base class for XCache test cases.
  * 
  * @author alvitar@xavax.com
  */
-public class XCacheTestCase {
+public class XTestUtils {
 
   /**
    * Sleep the specified number of milliseconds.
