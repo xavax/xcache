@@ -69,7 +69,8 @@ public class LocalBoundedCacheAdapter<K,V> extends AbstractCacheAdapter<K, V> {
    */
   @Override
   public void put(CacheContext<K,V> context, K key, V value, long expires) {
-    CacheMapEntry<K,V> entry = new CacheMapEntry<K,V>(key, value, expires);
+    CacheMapEntry<K,V> entry = new CacheMapEntry<K,V>();
+    entry.initialize(key, value, expires);
     map.put(key, entry);
   }
 
