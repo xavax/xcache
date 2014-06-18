@@ -11,10 +11,8 @@ import org.testng.annotations.Test;
 import com.xavax.cache.CacheAdapter;
 import com.xavax.cache.CacheManager;
 import com.xavax.cache.ExampleCacheManager;
-import com.xavax.cache.WritePolicy;
 import com.xavax.cache.XCache;
 import com.xavax.cache.builder.CacheBuilder;
-import com.xavax.cache.builder.CacheBuilderException;
 import com.xavax.cache.impl.LocalBoundedCacheAdapter;
 import com.xavax.cache.impl.AbstractCacheManagerImpl;
 import com.xavax.info.XProduct;
@@ -60,6 +58,7 @@ public class CacheBuilderTest {
     @SuppressWarnings("unchecked")
     Class<? extends CacheAdapter<String, Integer>> adapterClass =
 	(Class<? extends CacheAdapter<String, Integer>>) LocalBoundedCacheAdapter.class;
+    assertNotNull(adapterClass);
 //    builder.withAdapter(adapterClass);
 //    assertNotNull(builder.currentAdapter);
 //    assertEquals(builder.currentAdapter.adapterClass, adapterClass);
